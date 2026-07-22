@@ -300,20 +300,23 @@ img {
 }
 
 .hero-gallery {
-  min-height: 780px;
   position: relative;
   isolation: isolate;
+  width: 100%;
+  height: clamp(580px, 42vw, 680px);
+  min-height: 0;
+  overflow: visible;
 }
 
 .gallery-glow {
   position: absolute;
-  width: 60%;
+  width: 78%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: rgba(189,154,85,.22);
-  filter: blur(80px);
-  top: 18%;
-  left: 20%;
+  background: rgba(189, 154, 85, .19);
+  filter: blur(72px);
+  top: 10%;
+  left: 11%;
   z-index: -1;
 }
 
@@ -380,51 +383,62 @@ img {
 }
 
 .hero-art--1 {
-  width: 38%;
-  left: 29%;
+  width: 47%;
+  left: 26%;
   top: 1%;
-  --tilt: -3deg;
+  bottom: auto;
+  --tilt: -2.6deg;
   z-index: 5;
 }
 
 .hero-art--2 {
-  width: 25%;
-  left: 5%;
-  top: 20%;
-  --tilt: 4deg;
+  width: 30%;
+  left: 0;
+  top: 16%;
+  right: auto;
+  bottom: auto;
+  --tilt: 3.2deg;
   z-index: 4;
 }
 
 .hero-art--3 {
-  width: 22%;
-  right: 2%;
-  top: 15%;
-  --tilt: 3deg;
+  width: 28%;
+  right: 0;
+  top: 13%;
+  left: auto;
+  bottom: auto;
+  --tilt: 2.7deg;
   z-index: 3;
 }
 
 .hero-art--4 {
-  width: 35%;
-  left: 7%;
-  bottom: 4%;
-  --tilt: -4deg;
+  width: 43%;
+  left: 0;
+  top: 42%;
+  right: auto;
+  bottom: auto;
+  --tilt: -3deg;
   z-index: 2;
 }
 
 .hero-art--5 {
-  width: 37%;
-  left: 40%;
-  bottom: -1%;
-  --tilt: 2deg;
+  width: 47%;
+  left: 29%;
+  top: 41%;
+  right: auto;
+  bottom: auto;
+  --tilt: 1.8deg;
   z-index: 6;
 }
 
 .hero-art--6 {
-  width: 24%;
-  right: 1%;
-  bottom: 4%;
-  --tilt: -2deg;
-  z-index: 1;
+  width: 30%;
+  right: 0;
+  top: 39%;
+  left: auto;
+  bottom: auto;
+  --tilt: -1.8deg;
+  z-index: 3;
 }
 
 
@@ -2199,6 +2213,55 @@ img {
 }
 
 
+@media (min-width: 861px) and (max-width: 1180px) {
+  .hero-gallery {
+    height: 560px;
+    min-height: 0;
+  }
+
+  .hero-art--1 {
+    width: 48%;
+    left: 25%;
+    top: 2%;
+    bottom: auto;
+  }
+
+  .hero-art--2 {
+    width: 30%;
+    left: 0;
+    top: 17%;
+    bottom: auto;
+  }
+
+  .hero-art--3 {
+    width: 28%;
+    right: 0;
+    top: 14%;
+    bottom: auto;
+  }
+
+  .hero-art--4 {
+    width: 44%;
+    left: 0;
+    top: 43%;
+    bottom: auto;
+  }
+
+  .hero-art--5 {
+    width: 48%;
+    left: 28%;
+    top: 42%;
+    bottom: auto;
+  }
+
+  .hero-art--6 {
+    width: 30%;
+    right: 0;
+    top: 40%;
+    bottom: auto;
+  }
+}
+
 @media (max-width: 1180px) {
   .collection-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2235,7 +2298,6 @@ img {
   }
 
   .hero-gallery {
-    min-height: 760px;
     max-width: 850px;
     width: 100%;
     margin: 0 auto;
@@ -2320,7 +2382,8 @@ img {
   }
 
   .hero-gallery {
-    min-height: 680px;
+    height: 580px;
+    min-height: 0;
   }
 
   .manifesto {
@@ -2552,9 +2615,12 @@ img {
   }
 
   .hero-gallery {
+    position: relative;
     width: 100%;
-    min-height: 620px;
+    height: 500px;
+    min-height: 0;
     margin-top: 8px;
+    overflow: visible;
   }
 
   .hero-art {
@@ -2564,39 +2630,45 @@ img {
   }
 
   .hero-art--1 {
-    width: 49%;
-    left: 25%;
+    width: 52%;
+    left: 24%;
     top: 0;
+    bottom: auto;
   }
 
   .hero-art--2 {
-    width: 32%;
-    left: 0;
-    top: 18%;
+    width: 34%;
+    left: -1%;
+    top: 15%;
+    bottom: auto;
   }
 
   .hero-art--3 {
-    width: 29%;
-    right: 0;
-    top: 13%;
+    width: 31%;
+    right: -1%;
+    top: 12%;
+    bottom: auto;
   }
 
   .hero-art--4 {
-    width: 44%;
-    left: 1%;
-    bottom: 4%;
+    width: 47%;
+    left: -1%;
+    top: 42%;
+    bottom: auto;
   }
 
   .hero-art--5 {
-    width: 45%;
-    left: 30%;
-    bottom: 0;
+    width: 50%;
+    left: 28%;
+    top: 41%;
+    bottom: auto;
   }
 
   .hero-art--6 {
-    width: 28%;
-    right: 0;
-    bottom: 6%;
+    width: 32%;
+    right: -1%;
+    top: 40%;
+    bottom: auto;
   }
 
   .shared-result-owner {
