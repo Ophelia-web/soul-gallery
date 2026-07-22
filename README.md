@@ -107,12 +107,12 @@ node scripts/audit-commons.mjs
 
 ## 下一阶段建议
 
-- 逐幅人工确认高清图和版权标记
 - 生成适合小红书、朋友圈和 Instagram 的结果海报
 - 加入中英双语切换
 - 用真实用户测试数据校准题目与画作人格轮廓
 - 增加匿名统计，观察结果分布和隐藏画作触发率
 - 为每幅画增加历史背景与所在博物馆链接
+- 持续用 `node scripts/audit-commons.mjs` 回归检查 Commons 文件可用性
 
 ## License
 
