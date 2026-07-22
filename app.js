@@ -922,10 +922,9 @@ function renderResult(result) {
     </section>
 
     <section class="interpretation section-frame">
-      <div class="section-number">02</div>
       <div class="interpretation-title">
-        ${bilingualEyebrow(t('readingBackEn'), t('readingBackZh'))}
-        <h2>${t('readingBackTitle')}</h2>
+        <p class="canvas-back-eyebrow">${t('readingBackEn')}</p>
+        <h2 class="canvas-back-heading">${t('readingBackTitle')}</h2>
       </div>
       <div class="interpretation-cards">
         <article>
@@ -948,7 +947,6 @@ function renderResult(result) {
         ${bilingualEyebrow(t('spectrumEn'), t('spectrumZh'))}
         <h2>${t('spectrumTitle')}</h2>
         <p>${t('spectrumIntro')}</p>
-        <p class="tempo-note">${t('tempoNote')}</p>
       </div>
       <div class="spectrum-panel">${profileBars(profile)}</div>
     </section>
@@ -1212,7 +1210,6 @@ function renderCollection() {
           ${t('expandCollection')}
           <i aria-hidden="true">↓</i>
         </button>
-        <p>${t('collectionPreviewNote')}</p>
       </div>
     `
     }

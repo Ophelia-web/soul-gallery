@@ -94,7 +94,6 @@ const requiredUiKeys = [
   'beforeEnterEn',
   'beforeEnterZh',
   'expandCollection',
-  'collectionPreviewNote',
   'curatorNoteP1',
   'curatorNoteP2',
   'curatorNoteP3Before',
@@ -121,6 +120,8 @@ const removedUiKeys = [
   'howWorksTitle',
   'howWorksBody',
   'aboutStart',
+  'collectionPreviewNote',
+  'tempoNote',
 ];
 
 for (const key of removedUiKeys) {
@@ -131,6 +132,7 @@ for (const key of removedUiKeys) {
 
 const intentionalEmptyZh = new Set([
   'beforeEnterZh',
+  'readingBackZh',
   'spectrumZh',
   'neighboursZh',
   'museumZh',

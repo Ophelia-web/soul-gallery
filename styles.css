@@ -312,7 +312,7 @@ img {
 }
 
 .hero-gallery {
-  min-height: 620px;
+  min-height: 780px;
   position: relative;
   isolation: isolate;
 }
@@ -392,48 +392,48 @@ img {
 }
 
 .hero-art--1 {
-  width: 34%;
-  left: 31%;
-  top: 4%;
+  width: 38%;
+  left: 29%;
+  top: 1%;
   --tilt: -3deg;
   z-index: 5;
 }
 
 .hero-art--2 {
-  width: 22%;
+  width: 25%;
   left: 5%;
-  top: 23%;
+  top: 20%;
   --tilt: 4deg;
   z-index: 4;
 }
 
 .hero-art--3 {
-  width: 20%;
-  right: 3%;
-  top: 17%;
+  width: 22%;
+  right: 2%;
+  top: 15%;
   --tilt: 3deg;
   z-index: 3;
 }
 
 .hero-art--4 {
-  width: 31%;
+  width: 35%;
   left: 7%;
-  bottom: 7%;
+  bottom: 4%;
   --tilt: -4deg;
   z-index: 2;
 }
 
 .hero-art--5 {
-  width: 32%;
-  left: 39%;
-  bottom: 1%;
+  width: 37%;
+  left: 40%;
+  bottom: -1%;
   --tilt: 2deg;
   z-index: 6;
 }
 
 .hero-art--6 {
-  width: 21%;
-  right: 2%;
+  width: 24%;
+  right: 1%;
   bottom: 4%;
   --tilt: -2deg;
   z-index: 1;
@@ -607,8 +607,25 @@ img {
     );
 }
 
-.curator-note-section > .eyebrow {
-  margin-bottom: 40px;
+.curator-note-section > .eyebrow,
+.curator-note-section .eyebrow {
+  margin-bottom: 28px;
+  color: var(--wine);
+  font-family: var(--sans);
+  font-size: clamp(14px, 1.35vw, 18px);
+  font-weight: 700;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.curator-note-section .eyebrow small {
+  display: block;
+  margin-top: 8px;
+  color: var(--wine);
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .curator-note-layout {
@@ -658,8 +675,6 @@ img {
 
 .manifesto h2,
 .closing-cta h2,
-.interpretation h2,
-.spectrum-heading h2,
 .companions-heading h2,
 .museum-card h2,
 .hidden-corridor h2,
@@ -1176,10 +1191,35 @@ img {
 
 .interpretation {
   display: grid;
-  grid-template-columns: 80px .85fr 1.65fr;
+  grid-template-columns: .85fr 1.65fr;
   gap: clamp(28px, 5vw, 80px);
   padding: 90px 0;
   align-items: start;
+}
+
+.canvas-back-eyebrow {
+  margin: 0 0 24px;
+  color: var(--wine);
+  font-family: var(--sans);
+  font-size: clamp(15px, 1.45vw, 20px);
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.canvas-back-heading {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(54px, 5.3vw, 84px);
+  line-height: 1.06;
+  font-weight: 500;
+  letter-spacing: -.04em;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+.canvas-back-heading br {
+  display: block;
 }
 
 .interpretation-cards {
@@ -1218,7 +1258,17 @@ img {
   padding: 110px 0;
 }
 
-.spectrum-heading p:last-child {
+.spectrum-heading h2 {
+  margin: 0 0 28px;
+  font-family: var(--serif);
+  font-size: clamp(48px, 4.3vw, 72px);
+  line-height: 1.08;
+  font-weight: 500;
+  letter-spacing: -.04em;
+  white-space: nowrap;
+}
+
+.spectrum-heading p {
   max-width: 480px;
   color: var(--muted);
   line-height: 1.8;
@@ -1700,21 +1750,13 @@ img {
 .collection-expand {
   display: grid;
   justify-items: center;
-  gap: 16px;
+  gap: 0;
   padding: 10px 0 clamp(85px, 10vw, 135px);
   text-align: center;
 }
 
 .collection-expand .button {
   min-width: 190px;
-}
-
-.collection-expand p {
-  max-width: 480px;
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.7;
 }
 
 .museum-title-line {
@@ -2314,20 +2356,23 @@ img {
   }
 
   .hero-gallery {
-    min-height: 680px;
+    min-height: 760px;
     max-width: 850px;
     width: 100%;
     margin: 0 auto;
   }
 
-  .manifesto,
-  .interpretation {
+  .manifesto {
     grid-template-columns: 60px 1fr;
+  }
+
+  .interpretation {
+    grid-template-columns: 1fr;
   }
 
   .manifesto-copy,
   .interpretation-cards {
-    grid-column: 2;
+    grid-column: auto;
   }
 
   .collection-grid {
@@ -2383,7 +2428,7 @@ img {
   }
 
   .hero-gallery {
-    min-height: 570px;
+    min-height: 680px;
   }
 
   .manifesto {
@@ -2441,12 +2486,13 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .interpretation .section-number {
-    display: none;
-  }
-
   .spectrum-section {
     padding: 80px 0;
+  }
+
+  .spectrum-heading h2 {
+    white-space: normal;
+    font-size: clamp(42px, 10vw, 58px);
   }
 
   .companion-grid {
@@ -2600,8 +2646,8 @@ img {
 
   .hero-gallery {
     width: 100%;
-    min-height: 520px;
-    margin-top: 6px;
+    min-height: 620px;
+    margin-top: 8px;
   }
 
   .hero-art {
@@ -2611,39 +2657,39 @@ img {
   }
 
   .hero-art--1 {
-    width: 44%;
-    left: 28%;
-    top: 1%;
+    width: 49%;
+    left: 25%;
+    top: 0;
   }
 
   .hero-art--2 {
-    width: 28%;
+    width: 32%;
     left: 0;
-    top: 19%;
+    top: 18%;
   }
 
   .hero-art--3 {
-    width: 25%;
+    width: 29%;
     right: 0;
-    top: 14%;
+    top: 13%;
   }
 
   .hero-art--4 {
-    width: 39%;
-    left: 0;
+    width: 44%;
+    left: 1%;
     bottom: 4%;
   }
 
   .hero-art--5 {
-    width: 40%;
-    left: 31%;
+    width: 45%;
+    left: 30%;
     bottom: 0;
   }
 
   .hero-art--6 {
-    width: 25%;
+    width: 28%;
     right: 0;
-    bottom: 5%;
+    bottom: 6%;
   }
 
   .shared-result-owner {
