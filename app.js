@@ -15,21 +15,34 @@ const state = {
   frameClicks: 0,
 };
 
-const featuredIds = ['starry-night', 'girl-pearl', 'kiss-klimt', 'great-wave', 'birth-venus', 'qingming-scroll'];
+const featuredIds = [
+  'starry-night',
+  'girl-pearl',
+  'kiss-klimt',
+  'great-wave',
+  'birth-venus',
+  'early-spring',
+];
 
 function artworkImageMarkup(artwork, { className = '', width = 1200, eager = false } = {}) {
   const palette = artwork.palette || ['#4f5c52', '#9a8062', '#d1ba92'];
+  const commonsFile = artwork.commonsFile || '';
+
   return `
     <figure
       class="art-image ${className}"
       data-art-image
-      data-query="${artwork.imageQuery.replaceAll('"', '&quot;')}"
+      data-file="${commonsFile.replaceAll('"', '&quot;')}"
       data-alt="${artwork.titleZh} · ${artwork.titleEn}"
       data-width="${width}"
       style="--art-a:${palette[0]};--art-b:${palette[1]};--art-c:${palette[2]}"
     >
       <div class="image-skeleton" aria-hidden="true"><span></span></div>
-      <img ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} alt="" />
+      <img
+        ${eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
+        alt=""
+        decoding="async"
+      />
     </figure>
   `;
 }
@@ -56,7 +69,7 @@ function shell(content, { minimal = false } = {}) {
           <span>Soul Gallery · 灵魂画廊</span>
           <span>Discover the masterpiece that reflects your soul.</span>
         </div>
-        <p>这是一场审美化的人格体验，不用于心理诊断。画作图像由 Wikimedia Commons 动态检索，版权状态以原始来源页为准。</p>
+        <p>这是一场审美化的人格体验，不用于心理诊断。画作图像由 Wikimedia Commons 按已核验的文件来源在线载入，版权状态以原始来源页为准。</p>
       </footer>
     </div>
   `;
