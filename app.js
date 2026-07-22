@@ -123,6 +123,9 @@ function createTicketNumber() {
 const TICKET_TEMPLATE_PATH = './assets/branding/soul-gallery-ticket-template.png';
 const TICKET_CANVAS_WIDTH = 1536;
 const TICKET_CANVAS_HEIGHT = 1024;
+const TICKET_SUFFIX_X = 1354;
+const TICKET_SUFFIX_Y = 571;
+const TICKET_SUFFIX_MAX_WIDTH = 80;
 const TICKET_NAME_FONT =
   '"Baskerville", "Iowan Old Style", "Songti SC", "STSong", "SimSun", serif';
 
@@ -167,7 +170,7 @@ function fitCanvasFont(
     size -= 2;
   }
 
-  return size;
+  return Math.max(size, minSize);
 }
 
 async function drawTicketCanvas() {
@@ -218,18 +221,31 @@ async function drawTicketCanvas() {
 
   const ticketSuffix = String(state.ticketNumber || '').replace('SG-2026-', '');
 
-  context.save();
-  context.font = '600 31px "Baskerville", "Times New Roman", serif';
-  context.fillStyle = '#d2b45e';
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
+  if (ticketSuffix) {
+    const ticketNumberFont =
+      '"Baskerville", "Iowan Old Style", "Times New Roman", serif';
 
-  if ('letterSpacing' in context) {
-    context.letterSpacing = '2px';
+    const ticketSuffixSize = fitCanvasFont(context, ticketSuffix, {
+      maxWidth: TICKET_SUFFIX_MAX_WIDTH,
+      maxSize: 25,
+      minSize: 18,
+      fontFamily: ticketNumberFont,
+      fontWeight: 600,
+    });
+
+    context.save();
+    context.font = `600 ${ticketSuffixSize}px ${ticketNumberFont}`;
+    context.fillStyle = '#d2b45e';
+    context.textAlign = 'left';
+    context.textBaseline = 'middle';
+    context.fillText(
+      ticketSuffix,
+      TICKET_SUFFIX_X,
+      TICKET_SUFFIX_Y,
+      TICKET_SUFFIX_MAX_WIDTH
+    );
+    context.restore();
   }
-
-  context.fillText(ticketSuffix, 1372, 567);
-  context.restore();
 }
 
 function safeDownloadName(value) {
