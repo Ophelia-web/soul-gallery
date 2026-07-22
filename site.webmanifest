@@ -1,0 +1,10 @@
+{
+  "name": "Soul Gallery · 灵魂画廊",
+  "short_name": "Soul Gallery",
+  "description": "找到映照你灵魂的世界名画。",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3eee4",
+  "theme_color": "#f3eee4",
+  "icons": []
+}

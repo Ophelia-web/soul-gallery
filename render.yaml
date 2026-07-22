@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: soul-gallery
+    runtime: static
+    buildCommand: echo "Soul Gallery is ready"
+    staticPublishPath: .
+    autoDeploy: true
