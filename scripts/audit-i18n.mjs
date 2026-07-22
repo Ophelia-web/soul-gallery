@@ -111,6 +111,12 @@ const requiredUiKeys = [
   'heroBrandEn',
   'heroBrandZh',
   'heroTagline',
+  'featureQuestionsTitle',
+  'featureQuestionsBody',
+  'featureWorksTitle',
+  'featureWorksBody',
+  'featureMatchTitle',
+  'featureMatchBody',
 ];
 
 for (const key of requiredUiKeys) {

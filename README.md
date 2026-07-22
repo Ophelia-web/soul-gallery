@@ -2,7 +2,7 @@
 
 > Discover the masterpiece that reflects your soul.
 
-Soul Gallery 是一场以世界名画为结果的人格体验。访客回答 32 道选择题，系统结合八条人格光谱与低权重的思考节奏，在 108 幅公开画作和 6 幅隐藏画作中，寻找与其感知方式最接近的作品。
+Soul Gallery 是一场以世界名画为结果的人格体验。访客回答 32 道选择题，系统依据八条等权人格光谱，在 108 幅公开画作和 6 幅隐藏画作中，寻找与其感知方式最接近的作品。
 
 ## 体验内容
 
@@ -10,7 +10,7 @@ Soul Gallery 是一场以世界名画为结果的人格体验。访客回答 32 
 - 带访客姓名的 Soul Gallery 电子门票
 - 可下载的 1536 × 1024 高清 PNG 电子票
 - 32 道选择题
-- 八项人格光谱与一项思考节奏
+- 八项等权人格光谱
 - 108 幅公开画作与 6 幅隐藏画作
 - 主画、三幅相邻画作与完整人格解读
 - 保持原作宽高比的首页拼贴、馆藏与结果展示
@@ -44,9 +44,29 @@ assets/branding/
 7. 行动力度
 8. 内在明度
 
-系统还会记录每道题在页面可见状态下的思考时间，并将其汇总为低权重的“思考节奏”。页面不显示计时器，切换到其他标签页的时间不计入结果。
+评分方法：
 
-每幅画拥有独立的人格轮廓。最终结果来自整体距离，而不是由某一道题直接决定。
+- 每条光谱由 4 道题构成，共 32 道题
+- 每题四个有序选项，按选项顺序计为 0、33.33、66.67、100
+- 同维度四题等权平均，得到该维 0–100 的位置
+- 八个维度之间等权，不记录答题时间
+- 使用八维 RMSE 比较访客轮廓与画作轮廓
+- 光谱相似度 = 100 − RMSE
+- 相同答案始终得到相同结果
+
+Soul Gallery 参考多维特质测量与四级有序选择的结构，仅供娱乐与自我观察。它不是标准化心理量表，也不用于心理诊断。
+
+## 首页动态
+
+首页入口采用 CSS 与原生 JavaScript 生成的克制光影：
+
+- CSS 生成的天窗光与窗框淡影
+- 内嵌 SVG 树影
+- 画作暖色聚光与边框掠光
+- 指针柔光与多层视差
+- 缓慢纸张纹理与少量空气尘埃
+- 尊重 `prefers-reduced-motion`
+- 不使用外部背景素材或第三方动画库
 
 ## 图像来源
 
@@ -68,7 +88,8 @@ soul-gallery/
 │   └── i18n.js
 ├── lib/
 │   ├── commons.js
-│   └── scoring.js
+│   ├── scoring.js
+│   └── ambient.js
 ├── assets/
 │   ├── branding/
 │   │   ├── soul-gallery-emblem.png
@@ -77,6 +98,7 @@ soul-gallery/
 ├── scripts/
 │   ├── audit-commons.mjs
 │   ├── audit-i18n.mjs
+│   ├── audit-scoring.mjs
 │   ├── audit-results.mjs
 │   └── build-artwork-ratios.mjs
 ├── IMAGE_AUDIT.md
@@ -108,13 +130,13 @@ http://localhost:8000
 ## 质量审计
 
 ```bash
-node scripts/build-artwork-ratios.mjs
 node scripts/audit-commons.mjs
 node scripts/audit-i18n.mjs
+node scripts/audit-scoring.mjs
 node scripts/audit-results.mjs
 ```
 
-这些脚本分别更新宽高比数据，并检查画作文件、双语完整性和结果可达性。
+这些脚本分别检查画作文件、双语完整性、八维评分确定性与结果可达性。
 
 ## Render 部署
 

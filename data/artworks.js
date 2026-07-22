@@ -9,16 +9,6 @@ export const DIMENSIONS = [
   { key: 'brightness', label: '内在明度', labelEn: 'Brightness', low: '幽深沉静', lowEn: 'Deep quiet', high: '明亮温暖', highEn: 'Warm brightness' },
 ];
 
-export const TEMPO_DIMENSION = {
-  key: 'tempo',
-  label: '思考节奏',
-  labelEn: 'Decision Tempo',
-  low: '直觉迅速',
-  lowEn: 'Immediate instinct',
-  high: '审慎停留',
-  highEn: 'Deliberate reflection',
-};
-
 const artwork = (config) => ({ hidden: false, ...config });
 
 export const artworks = [
@@ -47,7 +37,7 @@ export const artworks = [
     growth: '让想象力成为窗，而不是门锁；偶尔把心里的星空说给一个可信的人听。',
     growthEn: 'Let imagination be a window, not a lock; tell a trusted person about the sky you carry.',
     commonsFile: 'Van Gogh - Starry Night - Google Art Project.jpg',
-    profile: [82, 42, 93, 94, 38, 82, 46, 42]
+    profile: [83.333333, 41.666667, 91.666667, 91.666667, 41.666667, 83.333333, 50, 41.666667]
   }),
   artwork({
     id: 'girl-pearl',
@@ -74,7 +64,7 @@ export const artworks = [
     growth: '不必等到完全确定才表达；一句坦白，常比一百次暗示更靠近你想要的关系。',
     growthEn: 'One honest sentence can bring you closer than a hundred hints.',
     commonsFile: '1665 Girl with a Pearl Earring.jpg',
-    profile: [76, 70, 62, 72, 48, 42, 38, 58]
+    profile: [75, 66.666667, 58.333333, 75, 50, 41.666667, 41.666667, 58.333333]
   }),
   artwork({
     id: 'kiss-klimt',
@@ -101,7 +91,7 @@ export const artworks = [
     growth: '别只寻找命定的光芒，也看看那些愿意每天替你留灯的人。',
     growthEn: 'Notice the people who leave a light on for you every day, not only destined radiance.',
     commonsFile: 'The Kiss - Gustav Klimt - Google Cultural Institute.jpg',
-    profile: [54, 66, 86, 90, 83, 65, 52, 76]
+    profile: [50, 66.666667, 83.333333, 91.666667, 83.333333, 66.666667, 50, 75]
   }),
   artwork({
     id: 'water-lilies',
@@ -128,7 +118,7 @@ export const artworks = [
     growth: '平和不是沉默。允许自己在水面起一点真实的风。',
     growthEn: 'Peace is not silence; let a real wind cross the water sometimes.',
     commonsFile: 'Claude Monet - Water Lilies - 1906, Ryerson.jpg',
-    profile: [68, 52, 42, 76, 58, 55, 32, 78]
+    profile: [66.666667, 50, 41.666667, 75, 58.333333, 58.333333, 33.333333, 75]
   }),
   artwork({
     id: 'mona-lisa',
@@ -155,7 +145,7 @@ export const artworks = [
     growth: '偶尔放下那一点完美的含蓄，让别人看见未经修饰的你。',
     growthEn: 'Occasionally put down the polished subtlety and let someone see you unretouched.',
     commonsFile: 'Mona Lisa, by Leonardo da Vinci, from C2RMF retouched.jpg',
-    profile: [64, 82, 55, 68, 52, 57, 58, 55]
+    profile: [66.666667, 83.333333, 58.333333, 66.666667, 50, 58.333333, 58.333333, 58.333333]
   }),
   artwork({
     id: 'birth-venus',
@@ -182,7 +172,7 @@ export const artworks = [
     growth: '美不需要被所有人认可；先确认这一次选择是否忠于你自己。',
     growthEn: 'Beauty needs no universal approval; ask first whether the choice is faithful to you.',
     commonsFile: 'Sandro Botticelli - La nascita di Venere - Google Art Project - edited.jpg',
-    profile: [55, 58, 71, 94, 72, 60, 38, 88]
+    profile: [58.333333, 58.333333, 75, 91.666667, 75, 58.333333, 41.666667, 91.666667]
   }),
   artwork({
     id: 'oath-horatii',
@@ -209,7 +199,7 @@ export const artworks = [
     growth: '原则不是让你失去柔软；真正可靠的人也可以承认犹豫、疲惫和需要。',
     growthEn: 'Principle need not cost softness; reliability can admit doubt, fatigue, and need.',
     commonsFile: 'David-Oath of the Horatii-1784.jpg',
-    profile: [35, 96, 82, 78, 88, 40, 96, 62]
+    profile: [33.333333, 100, 83.333333, 75, 91.666667, 41.666667, 100, 58.333333]
   }),
   artwork({
     id: 'night-watch',
@@ -236,7 +226,7 @@ export const artworks = [
     growth: '把责任分出去不是失去掌控，而是让队伍真正开始前进。',
     growthEn: 'Sharing responsibility is how a group actually begins to move.',
     commonsFile: 'The Nightwatch by Rembrandt - Rijksmuseum.jpg',
-    profile: [38, 88, 77, 68, 88, 55, 92, 48]
+    profile: [41.666667, 91.666667, 75, 66.666667, 91.666667, 58.333333, 91.666667, 50]
   }),
   artwork({
     id: 'great-wave',
@@ -263,7 +253,7 @@ export const artworks = [
     growth: '不必等到风浪出现才感到活着；安稳也可以是一种能力。',
     growthEn: 'You need not wait for rough water; steadiness can also be a skill.',
     commonsFile: 'The Great Wave off Kanagawa.jpg',
-    profile: [42, 55, 86, 70, 58, 88, 82, 50]
+    profile: [41.666667, 58.333333, 83.333333, 66.666667, 58.333333, 91.666667, 83.333333, 50]
   }),
   artwork({
     id: 'sunflowers',
@@ -290,7 +280,7 @@ export const artworks = [
     growth: '把一部分阳光留给自己；真正长久的热忱不靠燃烧维持。',
     growthEn: 'Keep some sunlight for yourself; lasting ardor cannot run on burning.',
     commonsFile: 'Vincent van Gogh - Sunflowers (1888, National Gallery London).jpg',
-    profile: [38, 48, 78, 84, 82, 62, 68, 96]
+    profile: [41.666667, 50, 75, 83.333333, 83.333333, 58.333333, 66.666667, 100]
   }),
   artwork({
     id: 'impression-sunrise',
@@ -317,7 +307,7 @@ export const artworks = [
     growth: '保留直觉，也给它一个可以落地的时间表。',
     growthEn: 'Keep intuition, and give it a schedule where it can land.',
     commonsFile: 'Claude Monet, Impression, soleil levant.jpg',
-    profile: [36, 20, 52, 86, 48, 94, 58, 88]
+    profile: [33.333333, 16.666667, 50, 83.333333, 50, 91.666667, 58.333333, 91.666667]
   }),
   artwork({
     id: 'the-swing',
@@ -344,7 +334,7 @@ export const artworks = [
     growth: '真正的自由既包括荡得更高，也包括愿意在该落地时落地。',
     growthEn: 'Freedom includes swinging higher, and landing when it is time.',
     commonsFile: 'Joean Honoré Fragonard - The Swing.jpg',
-    profile: [53, 36, 65, 63, 68, 71, 60, 67]
+    profile: [50, 33.333333, 66.666667, 66.666667, 66.666667, 75, 58.333333, 66.666667]
   }),
   artwork({
     id: 'wanderer-fog',
@@ -371,7 +361,7 @@ export const artworks = [
     growth: '山顶适合看路，却不适合久住；允许同行者走进你的风景。',
     growthEn: 'A summit is good for seeing the road, not for living forever; invite companions into the view.',
     commonsFile: 'Caspar David Friedrich - Wanderer above the sea of fog.jpg',
-    profile: [92, 62, 68, 91, 22, 76, 82, 48]
+    profile: [91.666667, 58.333333, 66.666667, 91.666667, 25, 75, 83.333333, 50]
   }),
   artwork({
     id: 'arnolfini',
@@ -398,7 +388,7 @@ export const artworks = [
     growth: '承诺需要结构，也需要呼吸；允许关系里有一些没有被计划的温度。',
     growthEn: 'Commitment needs structure and breath; let in some unplanned warmth.',
     commonsFile: 'Van Eyck - Arnolfini Portrait.jpg',
-    profile: [60, 96, 58, 64, 80, 28, 64, 58]
+    profile: [58.333333, 100, 58.333333, 66.666667, 83.333333, 25, 66.666667, 58.333333]
   }),
   artwork({
     id: 'las-meninas',
@@ -425,7 +415,7 @@ export const artworks = [
     growth: '并非每个角度都要确认后才能行动；有时你需要从镜子里走回现场。',
     growthEn: 'You do not need every angle confirmed before stepping back into the room.',
     commonsFile: 'Las Meninas, by Diego Velázquez, from Prado in Google EarthFXD.jpg',
-    profile: [70, 82, 64, 72, 72, 78, 56, 46]
+    profile: [66.666667, 83.333333, 66.666667, 75, 75, 75, 58.333333, 50]
   }),
   artwork({
     id: 'milkmaid',
@@ -452,7 +442,7 @@ export const artworks = [
     growth: '照顾好一切之前，也把自己的名字写进待办清单。',
     growthEn: 'Before caring for everything, write your own name on the list.',
     commonsFile: 'Johannes Vermeer - Het melkmeisje - Google Art Project.jpg',
-    profile: [66, 90, 35, 52, 62, 25, 58, 72]
+    profile: [66.666667, 91.666667, 33.333333, 50, 58.333333, 25, 58.333333, 75]
   }),
   artwork({
     id: 'school-athens',
@@ -479,7 +469,7 @@ export const artworks = [
     growth: '有些问题不必先成为理论，才值得被诚实地经历。',
     growthEn: 'Some questions deserve to be lived before they become theories.',
     commonsFile: 'Raphael School of Athens.jpg',
-    profile: [48, 92, 54, 82, 82, 76, 72, 72]
+    profile: [50, 91.666667, 50, 83.333333, 83.333333, 75, 75, 75]
   }),
   artwork({
     id: 'gleaners',
@@ -506,7 +496,7 @@ export const artworks = [
     growth: '坚韧值得骄傲，但你也有资格要求更公平的收获。',
     growthEn: 'Resilience matters, but you may also ask for a fairer harvest.',
     commonsFile: 'Jean-François Millet - Gleaners - Google Art Project 2.jpg',
-    profile: [58, 78, 52, 48, 74, 20, 68, 54]
+    profile: [58.333333, 75, 50, 50, 75, 16.666667, 66.666667, 50]
   }),
   artwork({
     id: 'grande-jatte',
@@ -533,7 +523,7 @@ export const artworks = [
     growth: '允许偶尔有一个点偏离计划；松动并不会毁掉整体。',
     growthEn: 'Let one point fall out of plan; looseness will not destroy the whole.',
     commonsFile: 'A Sunday on La Grande Jatte, Georges Seurat, 1884.jpg',
-    profile: [62, 98, 38, 60, 68, 58, 52, 66]
+    profile: [58.333333, 100, 41.666667, 58.333333, 66.666667, 58.333333, 50, 66.666667]
   }),
   artwork({
     id: 'moulin-galette',
@@ -560,7 +550,7 @@ export const artworks = [
     growth: '不必每次都负责点亮全场；你安静坐着，也依然值得被喜欢。',
     growthEn: 'You do not have to light the whole room every time.',
     commonsFile: 'Pierre-Auguste Renoir, Le Moulin de la Galette.jpg',
-    profile: [12, 35, 66, 70, 98, 72, 62, 94]
+    profile: [8.333333, 33.333333, 66.666667, 66.666667, 100, 75, 58.333333, 91.666667]
   }),
   artwork({
     id: 'fighting-temeraire',
@@ -587,7 +577,7 @@ export const artworks = [
     growth: '记忆可以被保留，但船仍要离岸；为新的自己腾出水面。',
     growthEn: 'Memory can stay, but the ship must leave; make water for the new self.',
     commonsFile: 'Turner, J. M. W. - The Fighting Téméraire tugged to her last Berth to be broken.jpg',
-    profile: [72, 68, 74, 82, 48, 38, 52, 46]
+    profile: [75, 66.666667, 75, 83.333333, 50, 41.666667, 50, 50]
   }),
   artwork({
     id: 'hay-wain',
@@ -614,7 +604,7 @@ export const artworks = [
     growth: '家园不是原地不动；它也可以是你带着熟悉感走向新地方的能力。',
     growthEn: 'Home can be the ability to carry familiarity into a new place.',
     commonsFile: 'John Constable The Hay Wain.jpg',
-    profile: [60, 72, 32, 58, 68, 18, 42, 82]
+    profile: [58.333333, 75, 33.333333, 58.333333, 66.666667, 16.666667, 41.666667, 83.333333]
   }),
   artwork({
     id: 'whistlers-mother',
@@ -641,7 +631,7 @@ export const artworks = [
     growth: '端正不必意味着永远忍耐；说出需要，也是一种对关系的信任。',
     growthEn: 'Naming a need is also trust in the relationship.',
     commonsFile: 'Whistlers Mother high res.jpg',
-    profile: [78, 94, 36, 52, 58, 18, 46, 42]
+    profile: [75, 91.666667, 33.333333, 50, 58.333333, 16.666667, 50, 41.666667]
   }),
   artwork({
     id: 'american-gothic',
@@ -668,7 +658,7 @@ export const artworks = [
     growth: '原则可以坚定，表情不必一直紧绷；生活并不会因你笑一下而失去秩序。',
     growthEn: 'Principles can stay firm while your face loosens.',
     commonsFile: 'Grant Wood - American Gothic - Google Art Project.jpg',
-    profile: [62, 96, 46, 38, 52, 28, 78, 44]
+    profile: [58.333333, 100, 50, 41.666667, 50, 25, 75, 41.666667]
   }),
   artwork({
     id: 'ambassadors',
@@ -695,7 +685,7 @@ export const artworks = [
     growth: '洞察是能力，信任也是；并非所有关系都需要解码。',
     growthEn: 'Insight is a skill, and so is trust; not every bond needs decoding.',
     commonsFile: 'Hans Holbein the Younger - The Ambassadors - Google Art Project.jpg',
-    profile: [68, 92, 52, 66, 56, 76, 74, 34]
+    profile: [66.666667, 91.666667, 50, 66.666667, 58.333333, 75, 75, 33.333333]
   }),
   artwork({
     id: 'blue-boy',
@@ -722,7 +712,7 @@ export const artworks = [
     growth: '真正的风度也包括在安全的人面前松开盔甲。',
     growthEn: 'True grace includes loosening armor before safe people.',
     commonsFile: 'Thomas Gainsborough - The Blue Boy (1770).jpg',
-    profile: [52, 78, 56, 68, 62, 48, 72, 66]
+    profile: [50, 75, 58.333333, 66.666667, 58.333333, 50, 75, 66.666667]
   }),
   artwork({
     id: 'laughing-cavalier',
@@ -749,7 +739,7 @@ export const artworks = [
     growth: '不必始终做那个游刃有余的人；真实比魅力更能留住关系。',
     growthEn: 'You need not always be effortless; truth holds better than charm.',
     commonsFile: 'Frans Hals – The Laughing Cavalier.jpg',
-    profile: [18, 46, 66, 52, 94, 70, 82, 86]
+    profile: [16.666667, 50, 66.666667, 50, 91.666667, 66.666667, 83.333333, 83.333333]
   }),
   artwork({
     id: 'rokeby-venus',
@@ -776,7 +766,7 @@ export const artworks = [
     growth: '把目光从“看起来如何”移回“此刻感觉如何”。',
     growthEn: 'Move attention from appearance back to present sensation.',
     commonsFile: 'Diego Velázquez - Rokeby Venus.jpg',
-    profile: [70, 62, 74, 78, 58, 58, 46, 60]
+    profile: [66.666667, 58.333333, 75, 75, 58.333333, 58.333333, 50, 58.333333]
   }),
   artwork({
     id: 'flaming-june',
@@ -803,7 +793,7 @@ export const artworks = [
     growth: '休息不必经过透支许可。让身体先于意志得到照顾。',
     growthEn: 'Rest needs no permission from exhaustion; care for the body before the will drains.',
     commonsFile: 'Frederic Leighton - Flaming June (1895) - Museo de Arte de Ponce.jpg',
-    profile: [78, 38, 82, 82, 42, 52, 34, 86]
+    profile: [75, 41.666667, 83.333333, 83.333333, 41.666667, 50, 33.333333, 83.333333]
   }),
   artwork({
     id: 'accolade',
@@ -830,7 +820,7 @@ export const artworks = [
     growth: '先学会为自己命名成就；荣誉不是别人手中的剑。',
     growthEn: 'Name your achievements first; honor is not someone else\'s sword.',
     commonsFile: 'Accolade by Edmund Blair Leighton.jpg',
-    profile: [42, 90, 70, 82, 76, 35, 92, 68]
+    profile: [41.666667, 91.666667, 66.666667, 83.333333, 75, 33.333333, 91.666667, 66.666667]
   }),
   artwork({
     id: 'lady-godiva',
@@ -857,7 +847,7 @@ export const artworks = [
     growth: '信念不要求你每次都独自承受；让支持者也进入行动。',
     growthEn: 'Conviction need not act alone; let supporters enter the work.',
     commonsFile: 'John Collier - Lady Godiva - c 1898 - Herbert Art Gallery and Museum.jpg',
-    profile: [62, 72, 84, 92, 68, 54, 94, 54]
+    profile: [58.333333, 75, 83.333333, 91.666667, 66.666667, 50, 91.666667, 50]
   }),
   artwork({
     id: 'cafe-terrace',
@@ -884,7 +874,7 @@ export const artworks = [
     growth: '有时不必只看灯下的人；主动为自己留一张桌。',
     growthEn: 'Reserve a table for yourself, not only watch the lamps.',
     commonsFile: 'Vincent Willem van Gogh - Cafe Terrace at Night (Yorck).jpg',
-    profile: [80, 56, 80, 96, 48, 86, 34, 96]
+    profile: [83.333333, 58.333333, 83.333333, 100, 50, 83.333333, 33.333333, 100]
   }),
   artwork({
     id: 'bedroom-arles',
@@ -911,7 +901,7 @@ export const artworks = [
     growth: '让私人空间恢复你，而不是把你永久留在里面。',
     growthEn: 'Let private space restore you, not keep you permanently.',
     commonsFile: 'Vincent van Gogh - De slaapkamer - Google Art Project.jpg',
-    profile: [90, 68, 58, 66, 30, 38, 32, 70]
+    profile: [91.666667, 66.666667, 58.333333, 66.666667, 33.333333, 41.666667, 33.333333, 66.666667]
   }),
   artwork({
     id: 'almond-blossom',
@@ -938,7 +928,7 @@ export const artworks = [
     growth: '春天不要求你否认冬天；让恢复拥有自己的速度。',
     growthEn: 'Spring need not deny winter; let recovery keep its pace.',
     commonsFile: 'Vincent van Gogh - Almond blossom - Google Art Project.jpg',
-    profile: [62, 52, 54, 92, 66, 68, 42, 96]
+    profile: [58.333333, 50, 50, 91.666667, 66.666667, 66.666667, 41.666667, 100]
   }),
   artwork({
     id: 'irises',
@@ -965,7 +955,7 @@ export const artworks = [
     growth: '不同并不必然等于孤立；给别人一次靠近你的机会。',
     growthEn: 'Difference need not mean isolation; give someone a chance to approach.',
     commonsFile: 'Irises-Vincent van Gogh.jpg',
-    profile: [86, 62, 90, 96, 40, 94, 42, 94]
+    profile: [83.333333, 58.333333, 91.666667, 100, 41.666667, 91.666667, 41.666667, 91.666667]
   }),
   artwork({
     id: 'red-vineyard',
@@ -992,7 +982,7 @@ export const artworks = [
     growth: '收获不只看付出了多少，也看这片土地是否仍值得耕作。',
     growthEn: 'Harvest also asks whether the land still deserves cultivation.',
     commonsFile: 'Red vineyards.jpg',
-    profile: [44, 66, 88, 76, 72, 58, 82, 76]
+    profile: [41.666667, 66.666667, 91.666667, 75, 75, 58.333333, 83.333333, 75]
   }),
   artwork({
     id: 'card-players',
@@ -1019,7 +1009,7 @@ export const artworks = [
     growth: '默契需要被验证；关键时刻，把手里的想法放到桌面上。',
     growthEn: 'At crucial moments, put the thought in your hand on the table.',
     commonsFile: 'Paul Cézanne - Les Joueurs de cartes.jpg',
-    profile: [80, 78, 40, 44, 58, 32, 52, 46]
+    profile: [83.333333, 75, 41.666667, 41.666667, 58.333333, 33.333333, 50, 50]
   }),
   artwork({
     id: 'basket-apples',
@@ -1046,7 +1036,7 @@ export const artworks = [
     growth: '让独特逻辑保持锋利，同时给观看者留一条能走进来的路。',
     growthEn: 'Keep your logic sharp, and leave a path into it.',
     commonsFile: 'Paul Cézanne - The Basket of Apples - 1926.252 - Art Institute of Chicago.jpg',
-    profile: [62, 74, 54, 66, 46, 82, 64, 64]
+    profile: [58.333333, 75, 50, 66.666667, 50, 83.333333, 66.666667, 66.666667]
   }),
   artwork({
     id: 'early-spring',
@@ -1073,7 +1063,7 @@ export const artworks = [
     growth: '山势可以在心中完整，脚下却只需要先走出今天的一小段。',
     growthEn: 'The mountain can be complete in mind; today needs only a short road.',
     commonsFile: 'Guo Xi - Early Spring (large).jpg',
-    profile: [78, 88, 48, 78, 44, 62, 58, 72]
+    profile: [75, 91.666667, 50, 75, 41.666667, 58.333333, 58.333333, 75]
   }),
   artwork({
     id: 'adele-bloch-bauer',
@@ -1100,7 +1090,7 @@ export const artworks = [
     growth: '不必等到一切都整理妥当才允许自己被照顾；未经装饰的你同样值得被珍惜。',
     growthEn: 'You need not be fully arranged before accepting care.',
     commonsFile: 'Gustav Klimt, 1907, Adele Bloch-Bauer I, Neue Galerie New York.jpg',
-    profile: [70, 84, 72, 86, 66, 58, 60, 78]
+    profile: [66.666667, 83.333333, 75, 83.333333, 66.666667, 58.333333, 58.333333, 75]
   }),
   artwork({
     id: 'red-fuji',
@@ -1127,7 +1117,7 @@ export const artworks = [
     growth: '山的形状稳定，光线每天不同；坚定也可以包含修正。',
     growthEn: 'The mountain is steady; the light changes daily. Firmness can revise.',
     commonsFile: 'Katsushika Hokusai - Fine Wind, Clear Morning (Gaifū kaisei) - Google Art Project.jpg',
-    profile: [70, 84, 42, 70, 46, 44, 84, 78]
+    profile: [66.666667, 83.333333, 41.666667, 66.666667, 50, 41.666667, 83.333333, 75]
   }),
   artwork({
     id: 'sudden-shower',
@@ -1154,7 +1144,7 @@ export const artworks = [
     growth: '保留轻快，也为自己准备一把真正可靠的伞。',
     growthEn: 'Keep the lightness, and prepare a dependable umbrella.',
     commonsFile: 'Hiroshige, Sudden shower over Shin-Ōhashi bridge and Atake, 1857.jpg',
-    profile: [39, 28, 50, 88, 48, 66, 70, 52]
+    profile: [41.666667, 25, 50, 91.666667, 50, 66.666667, 66.666667, 50]
   }),
 
   artwork({
@@ -1187,7 +1177,7 @@ export const artworks = [
     growth: '休息足够之后，也要睁眼看看月光之外。安全感最终需要陪你走动，而不只是让你停留。',
     growthEn: 'After enough rest, look beyond the moonlight. Security should eventually travel with you rather than keep you still.',
     commonsFile: 'Henri Rousseau - La Bohémienne endormie - Google Art Project.jpg',
-    profile: [78, 35, 66, 92, 28, 88, 38, 52],
+    profile: [75, 33.333333, 66.666667, 91.666667, 25, 91.666667, 41.666667, 50],
   }),
   artwork({
     id: 'in-the-conservatory',
@@ -1219,7 +1209,7 @@ export const artworks = [
     growth: '保留含蓄，但在真正重要的时刻，把目光之外的意思说出来。清楚并不会破坏优雅。',
     growthEn: 'Keep your subtlety, but speak plainly when the moment matters. Clarity does not destroy elegance.',
     commonsFile: 'In the Conservatory.jpg',
-    profile: [58, 82, 64, 66, 72, 42, 44, 60],
+    profile: [58.333333, 83.333333, 66.666667, 66.666667, 75, 41.666667, 41.666667, 58.333333],
   }),
   artwork({
     id: 'girl-watering-can',
@@ -1251,7 +1241,7 @@ export const artworks = [
     growth: '继续照料重要的人和事，也给自己的生活留一只喷壶。被照顾不是对温柔的浪费。',
     growthEn: 'Continue caring for what matters, but keep a watering can for your own life as well. Receiving care does not diminish your generosity.',
     commonsFile: 'Auguste Renoir - A Girl with a Watering Can - Google Art Project.jpg',
-    profile: [40, 62, 48, 78, 76, 54, 58, 92],
+    profile: [41.666667, 58.333333, 50, 75, 75, 50, 58.333333, 91.666667],
   }),
   artwork({
     id: 'boulevard-montmartre-night',
@@ -1283,7 +1273,7 @@ export const artworks = [
     growth: '看清街道之后，也为自己选择一个路口。观察能给你方向，但真正的经历仍要从走进去开始。',
     growthEn: 'After understanding the street, choose an intersection for yourself. Observation offers direction, but experience begins only when you enter.',
     commonsFile: 'Pissarro - The Boulevard Montmartre at Night (1897).jpg',
-    profile: [62, 72, 64, 76, 68, 70, 56, 54],
+    profile: [58.333333, 75, 66.666667, 75, 66.666667, 66.666667, 58.333333, 50],
   }),
   artwork({
     id: 'the-dream-rousseau',
@@ -1311,7 +1301,7 @@ export const artworks = [
     growth: '梦境可以为你指路，但真正改变生活的，仍是醒来之后愿意完成的那一步。',
     growthEn: 'Dreams point the way; waking steps change life.',
     commonsFile: 'Henri Rousseau - Le Rêve - Google Art Project.jpg',
-    profile: [82, 28, 90, 96, 58, 98, 42, 58],
+    profile: [83.333333, 25, 91.666667, 100, 58.333333, 100, 41.666667, 58.333333],
     unlock: { inner: [72, 100], intensity: [78, 100], idealism: [88, 100], novelty: [86, 100] }
   }),
   artwork({
@@ -1340,7 +1330,7 @@ export const artworks = [
     growth: '记忆可以芬芳，但也要给今天的花留下位置。',
     growthEn: 'Let memory stay fragrant, and leave room for today\'s flowers.',
     commonsFile: 'John William Waterhouse - The Soul of the Rose, 1903.jpg',
-    profile: [88, 54, 82, 94, 50, 48, 26, 72],
+    profile: [91.666667, 50, 83.333333, 91.666667, 50, 50, 25, 75],
     unlock: { inner: [80, 100], idealism: [88, 100], agency: [0, 38], brightness: [58, 86] }
   }),
   artwork({
@@ -1368,7 +1358,7 @@ export const artworks = [
     growth: '不必等别人先发现你的沉默。偶尔主动推开一扇门，让自己真正进入场景。',
     growthEn: 'Do not always wait for someone else to notice your silence. Sometimes growth begins by opening the door yourself.',
     commonsFile: 'Nighthawks by Edward Hopper 1942.jpg',
-    profile: [84, 70, 66, 72, 36, 54, 34, 30],
+    profile: [83.333333, 66.666667, 66.666667, 75, 33.333333, 50, 33.333333, 33.333333],
   }),
   artwork({
     id: 'luncheon-boating-party',
@@ -1395,7 +1385,7 @@ export const artworks = [
     growth: '让快乐也照顾你；不必每次都负责让所有杯子重新相碰。让今天先出现一点回声。',
     growthEn: 'Let joy take care of you too; you do not always have to make every glass meet again. Let today produce one small echo first.',
     commonsFile: 'Pierre-Auguste Renoir - Luncheon of the Boating Party - Google Art Project.jpg',
-    profile: [24, 46, 64, 80, 94, 70, 58, 96]
+    profile: [25, 50, 66.666667, 83.333333, 91.666667, 66.666667, 58.333333, 100]
   }),
   artwork({
     id: 'dance-swing-renoir',
@@ -1422,7 +1412,7 @@ export const artworks = [
     growth: '保留对嬉戏的敏感，也给社交一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to play, and give sociability one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Auguste Renoir - The Swing - Google Art Project.jpg',
-    profile: [30, 32, 60, 74, 90, 76, 55, 92]
+    profile: [33.333333, 33.333333, 58.333333, 75, 91.666667, 75, 58.333333, 91.666667]
   }),
   artwork({
     id: 'isabel-porcel',
@@ -1449,7 +1439,7 @@ export const artworks = [
     growth: '保留对优雅的敏感，也给分寸一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to elegance, and give measure one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Portrait of Doña Isabel de Porcel by Francisco Goya.jpg',
-    profile: [66, 88, 62, 64, 48, 44, 72, 58]
+    profile: [66.666667, 91.666667, 58.333333, 66.666667, 50, 41.666667, 75, 58.333333]
   }),
   artwork({
     id: 'two-sisters-terrace',
@@ -1476,7 +1466,7 @@ export const artworks = [
     growth: '保留对明亮的敏感，也给午后一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to brightness, and give afternoon one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Pierre-Auguste Renoir - Two Sisters (On the Terrace) - Google Art Project.jpg',
-    profile: [34, 48, 58, 78, 88, 62, 50, 90]
+    profile: [33.333333, 50, 58.333333, 75, 91.666667, 58.333333, 50, 91.666667]
   }),
   artwork({
     id: 'umbrellas-renoir',
@@ -1503,7 +1493,7 @@ export const artworks = [
     growth: '保留对转场的敏感，也给都市一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to transition, and give city one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Pierre-Auguste Renoir, The Umbrellas, ca. 1881-86.jpg',
-    profile: [26, 74, 40, 80, 96, 54, 78, 88]
+    profile: [25, 75, 41.666667, 83.333333, 100, 50, 75, 91.666667]
   }),
   artwork({
     id: 'girls-at-piano',
@@ -1530,7 +1520,7 @@ export const artworks = [
     growth: '保留对亲密的敏感，也给节奏一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to intimacy, and give rhythm one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Auguste Renoir - Young Girls at the Piano - Google Art Project.jpg',
-    profile: [50, 76, 46, 70, 78, 38, 44, 84]
+    profile: [50, 75, 50, 66.666667, 75, 41.666667, 41.666667, 83.333333]
   }),
   artwork({
     id: 'skiff-renoir',
@@ -1557,7 +1547,7 @@ export const artworks = [
     growth: '保留对闲适的敏感，也给轻盈一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to leisure, and give lightness one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Renoir - The Skiff aka La Yole - N-6478-00-000032-WZ-PYR tif.jpg',
-    profile: [28, 30, 44, 72, 84, 74, 48, 88]
+    profile: [25, 33.333333, 41.666667, 75, 83.333333, 75, 50, 91.666667]
   }),
   artwork({
     id: 'woman-parasol',
@@ -1584,7 +1574,7 @@ export const artworks = [
     growth: '保留对瞬间的敏感，也给明亮一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to instant, and give brightness one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Claude Monet - Woman with a Parasol - Madame Monet and Her Son - Google Art Project.jpg',
-    profile: [72, 20, 46, 96, 48, 100, 80, 100]
+    profile: [75, 16.666667, 50, 100, 50, 100, 83.333333, 100]
   }),
   artwork({
     id: 'poppy-field',
@@ -1611,7 +1601,7 @@ export const artworks = [
     growth: '保留对漫步的敏感，也给自由一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to strolling, and give freedom one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Claude Monet - Poppy Field - Google Art Project.jpg',
-    profile: [36, 28, 52, 76, 72, 88, 52, 90]
+    profile: [33.333333, 25, 50, 75, 75, 91.666667, 50, 91.666667]
   }),
   artwork({
     id: 'japanese-footbridge',
@@ -1638,7 +1628,7 @@ export const artworks = [
     growth: '保留对桥的敏感，也给色雾一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to bridge, and give colored haze one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Claude Monet, The Japanese Footbridge, 1899, NGA 74796.jpg',
-    profile: [72, 44, 62, 86, 52, 78, 38, 76]
+    profile: [75, 41.666667, 58.333333, 83.333333, 50, 75, 41.666667, 75]
   }),
   artwork({
     id: 'garden-sainte-adresse',
@@ -1665,7 +1655,7 @@ export const artworks = [
     growth: '保留对家庭的敏感，也给远望一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to family, and give distant view one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Claude Monet - 1867 - Garden at Sainte-Adresse.jpg',
-    profile: [44, 80, 48, 74, 76, 50, 60, 82]
+    profile: [41.666667, 83.333333, 50, 75, 75, 50, 58.333333, 83.333333]
   }),
   artwork({
     id: 'parliament-sunset',
@@ -1692,7 +1682,7 @@ export const artworks = [
     growth: '保留对黄昏的敏感，也给远观一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to dusk, and give distant view one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Claude Monet - The Houses of Parliament, Sunset.jpg',
-    profile: [76, 66, 68, 84, 38, 72, 42, 50]
+    profile: [75, 66.666667, 66.666667, 83.333333, 41.666667, 75, 41.666667, 50]
   }),
   artwork({
     id: 'artist-garden-giverny',
@@ -1719,7 +1709,7 @@ export const artworks = [
     growth: '保留对丰盛的敏感，也给耐心一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to abundance, and give patience one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Claude Monet The Artist\'s Garden at Giverny.jpg',
-    profile: [68, 72, 50, 82, 54, 64, 46, 88]
+    profile: [66.666667, 75, 50, 83.333333, 50, 66.666667, 50, 91.666667]
   }),
   artwork({
     id: 'dancers-blue',
@@ -1746,7 +1736,7 @@ export const artworks = [
     growth: '保留对蓝色的敏感，也给专注一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to blue, and give focus one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Edgar Germain Hilaire Degas 071.jpg',
-    profile: [52, 86, 70, 74, 62, 58, 76, 78]
+    profile: [50, 83.333333, 66.666667, 75, 58.333333, 58.333333, 75, 75]
   }),
   artwork({
     id: 'childs-bath',
@@ -1773,7 +1763,7 @@ export const artworks = [
     growth: '保留对亲密的敏感，也给耐心一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to intimacy, and give patience one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Mary Cassatt - The Child\'s Bath - Google Art Project.jpg',
-    profile: [70, 82, 44, 60, 88, 24, 46, 78]
+    profile: [66.666667, 83.333333, 41.666667, 58.333333, 91.666667, 25, 50, 75]
   }),
   artwork({
     id: 'little-girl-blue-armchair',
@@ -1800,7 +1790,7 @@ export const artworks = [
     growth: '保留对倦意的敏感，也给反规矩一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to drowsiness, and give rule-resistance one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Mary Cassatt, Little Girl in a Blue Armchair, 1878, NGA 61368.jpg',
-    profile: [32, 8, 42, 48, 40, 94, 26, 86]
+    profile: [33.333333, 8.333333, 41.666667, 50, 41.666667, 91.666667, 25, 83.333333]
   }),
   artwork({
     id: 'boating-party-cassatt',
@@ -1827,7 +1817,7 @@ export const artworks = [
     growth: '保留对航行的敏感，也给方向一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to voyage, and give direction one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Mary Cassatt - The Boating Party - Google Art Project.jpg',
-    profile: [42, 74, 62, 68, 90, 48, 78, 76]
+    profile: [41.666667, 75, 58.333333, 66.666667, 91.666667, 50, 75, 75]
   }),
   artwork({
     id: 'cradle-morisot',
@@ -1854,7 +1844,7 @@ export const artworks = [
     growth: '保留对安静的敏感，也给薄纱一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to quiet, and give veil one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Berthe Morisot - The Cradle - Google Art Project.jpg',
-    profile: [82, 78, 50, 70, 84, 22, 34, 66]
+    profile: [83.333333, 75, 50, 66.666667, 83.333333, 25, 33.333333, 66.666667]
   }),
   artwork({
     id: 'summers-day-morisot',
@@ -1881,7 +1871,7 @@ export const artworks = [
     growth: '保留对闲暇的敏感，也给女伴一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to leisure, and give female company one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Berthe Morisot - Jour d\'été, 1879.jpg',
-    profile: [56, 40, 42, 76, 80, 66, 36, 86]
+    profile: [58.333333, 41.666667, 41.666667, 75, 83.333333, 66.666667, 33.333333, 83.333333]
   }),
   artwork({
     id: 'paris-street-rain',
@@ -1908,7 +1898,7 @@ export const artworks = [
     growth: '保留对雨天的敏感，也给秩序一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to rain, and give order one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Gustave Caillebotte - Paris Street; Rainy Day - Google Art Project.jpg',
-    profile: [72, 88, 46, 54, 44, 50, 68, 48]
+    profile: [75, 91.666667, 50, 50, 41.666667, 50, 66.666667, 50]
   }),
   artwork({
     id: 'floor-scrapers',
@@ -1935,7 +1925,7 @@ export const artworks = [
     growth: '保留对专注的敏感，也给诚实一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to focus, and give honesty one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Gustave Caillebotte - The Floor Planers - Google Art Project.jpg',
-    profile: [54, 82, 58, 42, 66, 24, 76, 50]
+    profile: [50, 83.333333, 58.333333, 41.666667, 66.666667, 25, 75, 50]
   }),
   artwork({
     id: 'orange-trees-caillebotte',
@@ -1962,7 +1952,7 @@ export const artworks = [
     growth: '保留对荫凉的敏感，也给结构一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to shade, and give structure one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Gustave Caillebotte - The Orange Trees - Google Art Project.jpg',
-    profile: [50, 84, 38, 58, 74, 32, 54, 82]
+    profile: [50, 83.333333, 41.666667, 58.333333, 75, 33.333333, 50, 83.333333]
   }),
   artwork({
     id: 'bar-folies-bergere',
@@ -1989,7 +1979,7 @@ export const artworks = [
     growth: '保留对表演的敏感，也给镜像一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to performance, and give reflection one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Edouard Manet, A Bar at the Folies-Bergère.jpg',
-    profile: [80, 70, 72, 60, 42, 66, 52, 34]
+    profile: [83.333333, 66.666667, 75, 58.333333, 41.666667, 66.666667, 50, 33.333333]
   }),
   artwork({
     id: 'railway-manet',
@@ -2016,7 +2006,7 @@ export const artworks = [
     growth: '保留对等待的敏感，也给间隔一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to waiting, and give interval one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Edouard Manet - The Railway - Google Art Project.jpg',
-    profile: [82, 76, 50, 80, 38, 96, 44, 38]
+    profile: [83.333333, 75, 50, 83.333333, 41.666667, 100, 41.666667, 41.666667]
   }),
   artwork({
     id: 'balcony-manet',
@@ -2043,7 +2033,7 @@ export const artworks = [
     growth: '保留对社交面具的敏感，也给距离一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to social masks, and give distance one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Edouard Manet - The Balcony - Google Art Project.jpg',
-    profile: [74, 78, 56, 62, 46, 58, 50, 46]
+    profile: [75, 75, 58.333333, 58.333333, 50, 58.333333, 50, 50]
   }),
   artwork({
     id: 'view-delft',
@@ -2070,7 +2060,7 @@ export const artworks = [
     growth: '保留对家园的敏感，也给光一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to homeplace, and give light one concrete action today. Let today produce one small echo first.',
     commonsFile: 'View of Delft, by Johannes Vermeer.jpg',
-    profile: [76, 86, 34, 66, 58, 30, 38, 80]
+    profile: [75, 83.333333, 33.333333, 66.666667, 58.333333, 33.333333, 41.666667, 83.333333]
   }),
   artwork({
     id: 'art-of-painting',
@@ -2097,7 +2087,7 @@ export const artworks = [
     growth: '保留对寓言的敏感，也给室内一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to allegory, and give interior one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Jan Vermeer - The Art of Painting - Google Art Project.jpg',
-    profile: [78, 96, 48, 78, 40, 62, 56, 62]
+    profile: [75, 100, 50, 75, 41.666667, 58.333333, 58.333333, 58.333333]
   }),
   artwork({
     id: 'woman-reading-letter',
@@ -2124,7 +2114,7 @@ export const artworks = [
     growth: '保留对私密的敏感，也给蓝色一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to privacy, and give blue one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Vermeer, Johannes - Woman reading a letter - ca. 1662-1663.jpg',
-    profile: [86, 74, 60, 76, 44, 34, 32, 58]
+    profile: [83.333333, 75, 58.333333, 75, 41.666667, 33.333333, 33.333333, 58.333333]
   }),
   artwork({
     id: 'jewish-bride',
@@ -2151,7 +2141,7 @@ export const artworks = [
     growth: '保留对触碰的敏感，也给庄重一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to touch, and give gravity one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Rembrandt Harmensz. van Rijn - Portret van een paar als oudtestamentische figuren, genaamd \'Het Joodse bruidje\' - Google Art Project.jpg',
-    profile: [62, 86, 78, 80, 86, 26, 50, 70]
+    profile: [58.333333, 83.333333, 75, 83.333333, 83.333333, 25, 50, 66.666667]
   }),
   artwork({
     id: 'rembrandt-self-portrait-63',
@@ -2178,7 +2168,7 @@ export const artworks = [
     growth: '保留对诚实的敏感，也给尊严一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to honesty, and give dignity one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Rembrandt, Self Portrait at the Age of 63.jpg',
-    profile: [88, 84, 70, 58, 30, 24, 46, 28]
+    profile: [91.666667, 83.333333, 66.666667, 58.333333, 33.333333, 25, 50, 25]
   }),
   artwork({
     id: 'lady-ermine',
@@ -2205,7 +2195,7 @@ export const artworks = [
     growth: '保留对优雅的敏感，也给转身一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to elegance, and give turning one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Lady with an Ermine - Leonardo da Vinci - Google Art Project.jpg',
-    profile: [58, 82, 64, 72, 46, 70, 78, 64]
+    profile: [58.333333, 83.333333, 66.666667, 75, 50, 66.666667, 75, 66.666667]
   }),
   artwork({
     id: 'primavera',
@@ -2232,7 +2222,7 @@ export const artworks = [
     growth: '保留对神话的敏感，也给寓意一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to myth, and give allegory one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Sandro Botticelli - La Primavera - Google Art Project.jpg',
-    profile: [54, 68, 74, 96, 70, 76, 44, 86]
+    profile: [50, 66.666667, 75, 100, 66.666667, 75, 41.666667, 83.333333]
   }),
   artwork({
     id: 'madonna-magnificat',
@@ -2259,7 +2249,7 @@ export const artworks = [
     growth: '保留对庇护的敏感，也给虔敬一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to shelter, and give devotion one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Sandro Botticelli - Madonna del Magnificat - Google Art ProjectFXD.jpg',
-    profile: [66, 90, 48, 88, 82, 32, 40, 78]
+    profile: [66.666667, 91.666667, 50, 91.666667, 83.333333, 33.333333, 41.666667, 75]
   }),
   artwork({
     id: 'sistine-madonna',
@@ -2286,7 +2276,7 @@ export const artworks = [
     growth: '保留对慈悲的敏感，也给天幕一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to compassion, and give curtain one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Raphael - The Sistine Madonna - Google Arts & Culture.jpg',
-    profile: [48, 86, 72, 90, 88, 36, 64, 82]
+    profile: [50, 83.333333, 75, 91.666667, 91.666667, 33.333333, 66.666667, 83.333333]
   }),
   artwork({
     id: 'lady-unicorn',
@@ -2313,7 +2303,7 @@ export const artworks = [
     growth: '保留对象征的敏感，也给秘密一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to symbol, and give secret one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Raphael Portrait of a Lady with a Unicorn.jpg',
-    profile: [60, 84, 54, 82, 50, 52, 46, 68]
+    profile: [58.333333, 83.333333, 50, 83.333333, 50, 50, 50, 66.666667]
   }),
   artwork({
     id: 'venus-urbino',
@@ -2340,7 +2330,7 @@ export const artworks = [
     growth: '保留对直视的敏感，也给私室一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to direct gaze, and give chamber one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Tiziano - Venere di Urbino - Google Art Project.jpg',
-    profile: [52, 66, 80, 76, 74, 54, 62, 80]
+    profile: [50, 66.666667, 83.333333, 75, 75, 50, 58.333333, 83.333333]
   }),
   artwork({
     id: 'sleeping-venus',
@@ -2367,7 +2357,7 @@ export const artworks = [
     growth: '保留对自然的敏感，也给感官一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to nature, and give sensation one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Giorgione - Sleeping Venus - Google Art Project 2.jpg',
-    profile: [82, 42, 64, 84, 40, 38, 28, 74]
+    profile: [83.333333, 41.666667, 66.666667, 83.333333, 41.666667, 41.666667, 25, 75]
   }),
   artwork({
     id: 'spinners-velazquez',
@@ -2394,7 +2384,7 @@ export const artworks = [
     growth: '保留对神话的敏感，也给劳动一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to myth, and give labor one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Velazquez-las hilanderas.jpg',
-    profile: [64, 80, 66, 72, 60, 68, 58, 54]
+    profile: [66.666667, 83.333333, 66.666667, 75, 58.333333, 66.666667, 58.333333, 50]
   }),
   artwork({
     id: 'parasol-goya',
@@ -2421,7 +2411,7 @@ export const artworks = [
     growth: '保留对保护的敏感，也给轻快一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to protection, and give lightness one concrete action today. Let today produce one small echo first.',
     commonsFile: 'El quitasol, Francisco Goya.jpg',
-    profile: [32, 54, 50, 78, 86, 56, 42, 94]
+    profile: [33.333333, 50, 50, 75, 83.333333, 58.333333, 41.666667, 91.666667]
   }),
   artwork({
     id: 'stolen-kiss',
@@ -2448,7 +2438,7 @@ export const artworks = [
     growth: '保留对冲动的敏感，也给心跳一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to impulse, and give heartbeat one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Jean-Honoré Fragonard - The Stolen Kiss.jpg',
-    profile: [58, 48, 84, 88, 72, 62, 44, 70]
+    profile: [58.333333, 50, 83.333333, 91.666667, 75, 58.333333, 41.666667, 66.666667]
   }),
   artwork({
     id: 'madame-pompadour',
@@ -2475,7 +2465,7 @@ export const artworks = [
     growth: '保留对权谋的敏感，也给华丽一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to influence, and give splendor one concrete action today. Let today produce one small echo first.',
     commonsFile: 'François Boucher - Madame de Pompadour - Google Art Project.jpg',
-    profile: [50, 88, 66, 86, 82, 64, 72, 76]
+    profile: [50, 91.666667, 66.666667, 83.333333, 83.333333, 66.666667, 75, 75]
   }),
   artwork({
     id: 'mr-mrs-andrews',
@@ -2502,7 +2492,7 @@ export const artworks = [
     growth: '保留对婚姻的敏感，也给保留一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to marriage, and give reserve one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Thomas Gainsborough - Mr and Mrs Andrews.jpg',
-    profile: [46, 90, 42, 54, 72, 28, 64, 62]
+    profile: [50, 91.666667, 41.666667, 50, 75, 25, 66.666667, 58.333333]
   }),
   artwork({
     id: 'madame-recamier',
@@ -2529,7 +2519,7 @@ export const artworks = [
     growth: '保留对风度的敏感，也给沙龙一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to grace, and give salon one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Juliette Récamier, née Bernard - Jacques-Louis David - Musée duLouvre Peintures INV 3708.jpg',
-    profile: [70, 92, 38, 68, 50, 40, 48, 64]
+    profile: [66.666667, 91.666667, 41.666667, 66.666667, 50, 41.666667, 50, 66.666667]
   }),
   artwork({
     id: 'grande-odalisque',
@@ -2556,7 +2546,7 @@ export const artworks = [
     growth: '保留对距离的敏感，也给冷静一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to distance, and give coolness one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Jean Auguste Dominique Ingres, La Grande Odalisque, 1814.jpg',
-    profile: [74, 72, 76, 84, 44, 74, 40, 52]
+    profile: [75, 75, 75, 83.333333, 41.666667, 75, 41.666667, 50]
   }),
   artwork({
     id: 'women-algiers',
@@ -2583,7 +2573,7 @@ export const artworks = [
     growth: '保留对浓色的敏感，也给沉思一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to rich color, and give reverie one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Eugène Delacroix - The Women of Algiers, 1834.jpg',
-    profile: [78, 50, 82, 88, 56, 80, 34, 44]
+    profile: [75, 50, 83.333333, 91.666667, 58.333333, 83.333333, 33.333333, 41.666667]
   }),
   artwork({
     id: 'old-battersea-bridge',
@@ -2610,7 +2600,7 @@ export const artworks = [
     growth: '保留对蓝金的敏感，也给静谧一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to blue and gold, and give quiet one concrete action today. Let today produce one small echo first.',
     commonsFile: 'James McNeill Whistler - Nocturne en bleu et or.jpg',
-    profile: [86, 64, 52, 80, 32, 58, 30, 36]
+    profile: [83.333333, 66.666667, 50, 83.333333, 33.333333, 58.333333, 33.333333, 33.333333]
   }),
   artwork({
     id: 'breezing-up',
@@ -2637,7 +2627,7 @@ export const artworks = [
     growth: '保留对少年的敏感，也给勇气一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to youth, and give courage one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Winslow Homer - Breezing Up (A Fair Wind) - Google Art Project.jpg',
-    profile: [30, 58, 66, 70, 88, 72, 86, 86]
+    profile: [33.333333, 58.333333, 66.666667, 66.666667, 91.666667, 75, 83.333333, 83.333333]
   }),
   artwork({
     id: 'carnation-lily',
@@ -2664,7 +2654,7 @@ export const artworks = [
     growth: '保留对灯笼的敏感，也给花园一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to lanterns, and give garden one concrete action today. Let today produce one small echo first.',
     commonsFile: 'John Singer Sargent - Carnation, Lily, Lily, Rose - Google Art Project.jpg',
-    profile: [58, 56, 48, 88, 74, 52, 36, 96]
+    profile: [58.333333, 58.333333, 50, 91.666667, 75, 50, 33.333333, 100]
   }),
   artwork({
     id: 'lady-agnew',
@@ -2691,7 +2681,7 @@ export const artworks = [
     growth: '保留对松弛的敏感，也给直视一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to ease, and give direct gaze one concrete action today. Let today produce one small echo first.',
     commonsFile: 'John Singer Sargent - Lady Agnew of Lochnaw.jpg',
-    profile: [44, 70, 68, 74, 78, 58, 70, 82]
+    profile: [41.666667, 66.666667, 66.666667, 75, 75, 58.333333, 66.666667, 83.333333]
   }),
   artwork({
     id: 'nut-gatherers',
@@ -2718,7 +2708,7 @@ export const artworks = [
     growth: '保留对田野的敏感，也给收集一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to field, and give gathering one concrete action today. Let today produce one small echo first.',
     commonsFile: 'William-Adolphe Bouguereau (1825-1905) - The Nut Gatherers (1882).jpg',
-    profile: [38, 62, 40, 70, 86, 46, 48, 88]
+    profile: [41.666667, 58.333333, 41.666667, 66.666667, 83.333333, 50, 50, 91.666667]
   }),
   artwork({
     id: 'music-lesson-leighton',
@@ -2745,7 +2735,7 @@ export const artworks = [
     growth: '保留对乐声的敏感，也给传承一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to music, and give inheritance one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Music Lesson, 1877 by Frederic Leighton.jpg',
-    profile: [56, 88, 44, 76, 82, 34, 48, 72]
+    profile: [58.333333, 91.666667, 41.666667, 75, 83.333333, 33.333333, 50, 75]
   }),
   artwork({
     id: 'mont-sainte-victoire-bellevue',
@@ -2772,7 +2762,7 @@ export const artworks = [
     growth: '保留对结构的敏感，也给重建一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to structure, and give reconstruction one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Paul Cézanne - Mont Sainte-Victoire (La Montagne Sainte-Victoire) - BF13 - Barnes Foundation.jpg',
-    profile: [74, 96, 40, 70, 34, 58, 56, 58]
+    profile: [75, 100, 41.666667, 66.666667, 33.333333, 58.333333, 58.333333, 58.333333]
   }),
   artwork({
     id: 'boy-red-vest',
@@ -2799,7 +2789,7 @@ export const artworks = [
     growth: '保留对红色的敏感，也给内敛一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to red, and give reserve one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Le Garçon au gilet rouge, par Paul Cézanne, National Gallery of Art.jpg',
-    profile: [82, 76, 68, 62, 36, 42, 44, 40]
+    profile: [83.333333, 75, 66.666667, 58.333333, 33.333333, 41.666667, 41.666667, 41.666667]
   }),
   artwork({
     id: 'arearea',
@@ -2826,7 +2816,7 @@ export const artworks = [
     growth: '保留对仪式的敏感，也给想象一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to ritual, and give imagination one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Paul Gauguin - Arearea - Google Art Project.jpg',
-    profile: [50, 24, 82, 92, 58, 96, 60, 76]
+    profile: [50, 25, 83.333333, 91.666667, 58.333333, 100, 58.333333, 75]
   }),
   artwork({
     id: 'tahitian-women-beach',
@@ -2853,7 +2843,7 @@ export const artworks = [
     growth: '保留对静坐的敏感，也给色彩一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to seated stillness, and give color one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Paul Gauguin 056.jpg',
-    profile: [68, 34, 74, 86, 52, 92, 38, 64]
+    profile: [66.666667, 33.333333, 75, 83.333333, 50, 91.666667, 41.666667, 66.666667]
   }),
   artwork({
     id: 'harmony-red',
@@ -2880,7 +2870,7 @@ export const artworks = [
     growth: '保留对室内的敏感，也给丰盛一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to interior, and give abundance one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Henri Matisse - The Red Room-1908.jpg',
-    profile: [36, 48, 86, 90, 76, 88, 72, 92]
+    profile: [33.333333, 50, 83.333333, 91.666667, 75, 91.666667, 75, 91.666667]
   }),
   artwork({
     id: 'composition-viii',
@@ -2907,7 +2897,7 @@ export const artworks = [
     growth: '保留对几何的敏感，也给实验一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to geometry, and give experiment one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Wassily Kandinsky Composition VIII.jpg',
-    profile: [44, 90, 76, 82, 40, 98, 84, 70]
+    profile: [41.666667, 91.666667, 75, 83.333333, 41.666667, 100, 83.333333, 66.666667]
   }),
   artwork({
     id: 'senecio',
@@ -2934,7 +2924,7 @@ export const artworks = [
     growth: '保留对童趣的敏感，也给智慧一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to playfulness, and give wit one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Paul Klee, 1922, Senecio, oil on gauze, 40.3 × 37.4 cm, Kunstmuseum Basel.jpg',
-    profile: [48, 72, 62, 78, 58, 94, 66, 84]
+    profile: [50, 75, 58.333333, 75, 58.333333, 91.666667, 66.666667, 83.333333]
   }),
   artwork({
     id: 'broadway-boogie',
@@ -2961,7 +2951,7 @@ export const artworks = [
     growth: '保留对节拍的敏感，也给明黄一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to beat, and give bright yellow one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Piet Mondrian, 1942 - Broadway Boogie Woogie.jpg',
-    profile: [22, 98, 68, 70, 78, 90, 88, 98]
+    profile: [25, 100, 66.666667, 66.666667, 75, 91.666667, 91.666667, 100]
   }),
   artwork({
     id: 'hunters-snow',
@@ -2988,7 +2978,7 @@ export const artworks = [
     growth: '保留对归途的敏感，也给全景一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to homeward path, and give panorama one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Pieter Bruegel the Elder - Hunters in the Snow (Winter) - Google Art Project.jpg',
-    profile: [70, 82, 44, 54, 72, 30, 58, 34]
+    profile: [66.666667, 83.333333, 41.666667, 50, 75, 33.333333, 58.333333, 33.333333]
   }),
   artwork({
     id: 'peasant-wedding',
@@ -3015,7 +3005,7 @@ export const artworks = [
     growth: '保留对朴素的敏感，也给食物一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to plainness, and give food one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Pieter Bruegel the Elder - Peasant Wedding - Google Art Project 2.jpg',
-    profile: [32, 64, 52, 50, 96, 22, 66, 84]
+    profile: [33.333333, 66.666667, 50, 50, 100, 25, 66.666667, 83.333333]
   }),
   artwork({
     id: 'bookworm-spitzweg',
@@ -3043,8 +3033,8 @@ export const artworks = [
     growth: '保留对专注的敏感，也给知识癖一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to focus, and give bibliomania one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Carl Spitzweg Der Bücherwurm 537.jpg',
-    profile: [96, 94, 42, 76, 14, 58, 24, 46],
-    unlock: { inner: [88, 100], structure: [82, 100], connection: [0, 28], tempo: [0, 34] }
+    profile: [100, 91.666667, 41.666667, 75, 16.666667, 58.333333, 25, 50],
+    unlock: { inner: [88, 100], structure: [82, 100], connection: [0, 28], brightness: [0, 42] }
   }),
   artwork({
     id: 'goldfish-matisse',
@@ -3072,8 +3062,8 @@ export const artworks = [
     growth: '保留对色彩的敏感，也给室内花园一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to color, and give indoor garden one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Les Poissons rouges, par Henri Matisse.jpg',
-    profile: [82, 44, 68, 88, 30, 82, 26, 90],
-    unlock: { inner: [74, 100], novelty: [72, 100], brightness: [78, 100], tempo: [0, 42] }
+    profile: [83.333333, 41.666667, 66.666667, 91.666667, 33.333333, 83.333333, 25, 91.666667],
+    unlock: { inner: [74, 100], novelty: [72, 100], brightness: [78, 100], agency: [0, 48] }
   }),
   artwork({
     id: 'astronomer-vermeer',
@@ -3101,7 +3091,7 @@ export const artworks = [
     growth: '保留对求知的敏感，也给推演一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to inquiry, and give deduction one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Johannes Vermeer - The Astronomer - 1668.jpg',
-    profile: [90, 96, 52, 82, 18, 70, 42, 54],
+    profile: [91.666667, 100, 50, 83.333333, 16.666667, 66.666667, 41.666667, 50],
     unlock: { inner: [84, 100], structure: [86, 100], idealism: [72, 100], connection: [0, 32] }
   }),
   artwork({
@@ -3130,8 +3120,8 @@ export const artworks = [
     growth: '保留对激情的敏感，也给行动一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to passion, and give action one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Francesco Hayez 008.jpg',
-    profile: [62, 58, 94, 96, 72, 64, 86, 50],
-    unlock: { intensity: [86, 100], idealism: [88, 100], agency: [76, 100], tempo: [70, 100] }
+    profile: [58.333333, 58.333333, 91.666667, 100, 75, 66.666667, 83.333333, 50],
+    unlock: { intensity: [86, 100], idealism: [88, 100], agency: [76, 100], connection: [62, 100] }
   }),
 ];
 

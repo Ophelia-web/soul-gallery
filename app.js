@@ -17,6 +17,11 @@ import {
   clamp,
 } from './lib/scoring.js';
 import { hydrateArtworkImages } from './lib/commons.js';
+import {
+  initHomeAmbient,
+  destroyHomeAmbient,
+  runGalleryTransition,
+} from './lib/ambient.js';
 
 let collectionScrollHandler = null;
 const COLLECTION_PREVIEW_COUNT = 8;
@@ -338,8 +343,6 @@ const state = {
   logoClicks: 0,
   frameClicks: 0,
   language: getInitialLanguage(),
-  responseTimes: {},
-  questionClock: null,
   visitorName: readVisitorName(),
   ticketNumber: null,
   resultOrigin: 'own',
@@ -356,15 +359,13 @@ const featuredIds = [
   'early-spring',
 ];
 
+const featuredDepths = [0.75, 1, 0.42, 0.45, 1, 0.55];
+
 document.documentElement.lang = state.language === 'en' ? 'en' : 'zh-CN';
 
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    pauseQuestionClock();
-  } else {
-    resumeQuestionClock();
-  }
-});
+function setViewTheme(view) {
+  document.body.dataset.view = view;
+}
 
 function t(key, ...args) {
   const table = UI[state.language] || UI.zh;
@@ -500,16 +501,17 @@ function parseSharedProfile(value) {
     .split(',')
     .map(Number);
   const dimensions = spectrumDimensions();
+  const compatibleParts = parts.length === 9 ? parts.slice(0, 8) : parts;
 
   if (
-    parts.length !== dimensions.length ||
-    parts.some((number) => !Number.isFinite(number) || number < 0 || number > 100)
+    compatibleParts.length !== dimensions.length ||
+    compatibleParts.some((number) => !Number.isFinite(number) || number < 0 || number > 100)
   ) {
     return null;
   }
 
   return Object.fromEntries(
-    dimensions.map((dimension, index) => [dimension.key, parts[index]])
+    dimensions.map((dimension, index) => [dimension.key, compatibleParts[index]])
   );
 }
 
@@ -564,15 +566,21 @@ function shell(content, { minimal = false } = {}) {
             <small>${t('brandSmall')}</small>
           </span>
         </button>
-        <nav class="header-nav" aria-label="${t('navMainAria')}">
-          <button data-action="collection">${t('navCollection')}</button>
-          <button data-action="about">${t('navAbout')}</button>
-          <button
-            class="lang-switch"
-            data-action="toggle-language"
-            aria-label="${t('langSwitchAria')}"
-          >${t('langSwitch')}</button>
-        </nav>
+        <div class="header-actions">
+          <nav class="header-nav" aria-label="${t('navMainAria')}">
+            <button data-action="collection">${t('navCollection')}</button>
+            <button data-action="about">${t('navAbout')}</button>
+            <button
+              class="lang-switch"
+              data-action="toggle-language"
+              aria-label="${t('langSwitchAria')}"
+            >${t('langSwitch')}</button>
+          </nav>
+          <button class="header-ticket-cta" data-action="ticket">
+            <span>${t('startCta')}</span>
+            <i aria-hidden="true">→</i>
+          </button>
+        </div>
       </header>
       <main>${content}</main>
       <footer class="site-footer">
@@ -584,49 +592,6 @@ function shell(content, { minimal = false } = {}) {
       </footer>
     </div>
   `;
-}
-
-function startQuestionClock(questionId) {
-  state.questionClock = {
-    questionId,
-    visibleElapsed: 0,
-    activeSince: document.hidden ? null : performance.now(),
-  };
-}
-
-function pauseQuestionClock() {
-  const clock = state.questionClock;
-
-  if (!clock || clock.activeSince === null) {
-    return;
-  }
-
-  clock.visibleElapsed += performance.now() - clock.activeSince;
-  clock.activeSince = null;
-}
-
-function resumeQuestionClock() {
-  const clock = state.questionClock;
-
-  if (!clock || clock.activeSince !== null || document.hidden) {
-    return;
-  }
-
-  clock.activeSince = performance.now();
-}
-
-function finishQuestionClock(questionId) {
-  const clock = state.questionClock;
-
-  if (!clock || clock.questionId !== questionId) {
-    return null;
-  }
-
-  pauseQuestionClock();
-
-  const elapsed = Math.min(45000, Math.max(450, clock.visibleElapsed));
-  state.questionClock = null;
-  return elapsed;
 }
 
 function scrollToAdmissionNotice() {
@@ -650,14 +615,21 @@ function scrollToAdmissionNotice() {
 
 function renderHome() {
   state.view = 'home';
+  setViewTheme('home');
+  destroyHomeAmbient();
   cleanupCollectionScrollHandler();
   clearShareParamsFromUrl();
 
   const featured = featuredIds
     .map((id, index) => {
       const artwork = artworkById[id];
+      const depth = featuredDepths[index];
       return `
-      <div class="hero-art hero-art--${index + 1}">
+      <div
+        class="hero-art hero-art--${index + 1}"
+        data-depth="${depth}"
+        style="--depth:${depth};"
+      >
         ${artworkImageMarkup(artwork, { width: 900, eager: index < 2 })}
         <span>${localizedArtworkTitle(artwork)}</span>
       </div>
@@ -666,30 +638,71 @@ function renderHome() {
     .join('');
 
   app.innerHTML = shell(`
-    <section class="hero">
+    <section class="hero home-stage">
+      <div class="home-ambient" aria-hidden="true">
+        <div class="skylight-beam"></div>
+        <div class="window-cast"></div>
+        <div class="leaf-shadow"></div>
+        <div class="ambient-dust"></div>
+      </div>
+
       <div class="hero-copy">
         <div class="hero-branding">
-          <div class="hero-branding-en">${t('heroBrandEn')}</div>
-          <div class="hero-branding-zh">${t('heroBrandZh')}</div>
+          <h1 class="hero-branding-en">${t('heroBrandEn')}</h1>
+          <div class="hero-branding-zh">
+            ${t('heroBrandZh')}
+            <span aria-hidden="true"></span>
+          </div>
           <p class="hero-tagline">${t('heroTagline')}</p>
         </div>
+
         <p class="hero-intro">${t('heroIntro')}</p>
+
         <div class="hero-actions">
-          <button class="button button--ghost" data-action="collection">${t('collectionCta')}</button>
-          <button class="button button--primary" data-action="ticket">
-            <span>${t('startCta')}</span><i aria-hidden="true">→</i>
+          <button class="button button--primary hero-primary-cta" data-action="ticket">
+            <span>${t('startCta')}</span>
+            <i aria-hidden="true">→</i>
+          </button>
+          <button class="button button--ghost" data-action="collection">
+            <span>${t('collectionCta')}</span>
+            <i aria-hidden="true">⌂</i>
           </button>
         </div>
-        <dl class="hero-facts">
-          <div><dt>32</dt><dd>${t('factChoices')}</dd></div>
-          <div><dt>108</dt><dd>${t('factPublic')}</dd></div>
-          <div><dt>6</dt><dd>${t('factHidden')}</dd></div>
-        </dl>
       </div>
-      <div class="hero-gallery" aria-label="${state.language === 'en' ? 'Collection preview' : '部分馆藏预览'}">
-        <div class="gallery-glow"></div>
+
+      <div
+        class="hero-gallery"
+        data-hero-gallery
+        aria-label="${state.language === 'en' ? 'Collection preview' : '部分馆藏预览'}"
+      >
+        <div class="gallery-wall-glow"></div>
+        <div class="gallery-cursor-glow"></div>
         ${featured}
       </div>
+
+      <section class="hero-feature-strip">
+        <article>
+          <span class="feature-icon feature-icon--spark" aria-hidden="true"></span>
+          <div>
+            <h3>${t('featureQuestionsTitle')}</h3>
+            <p>${t('featureQuestionsBody')}</p>
+          </div>
+        </article>
+        <article>
+          <span class="feature-icon feature-icon--frame" aria-hidden="true"></span>
+          <div>
+            <h3>${t('featureWorksTitle')}</h3>
+            <p>${t('featureWorksBody')}</p>
+          </div>
+        </article>
+        <article>
+          <span class="feature-icon feature-icon--heart" aria-hidden="true"></span>
+          <div>
+            <h3>${t('featureMatchTitle')}</h3>
+            <p>${t('featureMatchBody')}</p>
+          </div>
+        </article>
+      </section>
     </section>
 
     <section class="admission-notice section-frame" id="admission-notice">
@@ -753,10 +766,13 @@ function renderHome() {
 
   bindGlobalActions();
   hydrateArtworkImages(app);
+  initHomeAmbient(app.querySelector('.home-stage'));
 }
 
 function renderTicket() {
   state.view = 'ticket';
+  setViewTheme('ticket');
+  destroyHomeAmbient();
   cleanupCollectionScrollHandler();
   clearShareParamsFromUrl();
 
@@ -866,6 +882,8 @@ function renderTicket() {
 
 function renderQuiz() {
   state.view = 'quiz';
+  setViewTheme('quiz');
+  destroyHomeAmbient();
   cleanupCollectionScrollHandler();
   const question = questions[state.questionIndex];
   const current = state.questionIndex + 1;
@@ -917,19 +935,10 @@ function renderQuiz() {
   );
 
   bindGlobalActions();
-  requestAnimationFrame(() => {
-    startQuestionClock(question.id);
-  });
 }
 
 function answerQuestion(value) {
   const question = questions[state.questionIndex];
-  const responseTime = finishQuestionClock(question.id);
-
-  if (typeof responseTime === 'number') {
-    state.responseTimes[question.id] = responseTime;
-  }
-
   state.answers[question.id] = Number(value);
 
   const card = document.querySelector('[data-question-card]');
@@ -947,10 +956,12 @@ function answerQuestion(value) {
 
 function beginCuration() {
   cleanupCollectionScrollHandler();
-  state.result = getResult(state.answers, questions, state.responseTimes);
+  destroyHomeAmbient();
+  state.result = getResult(state.answers, questions);
   state.resultOrigin = 'own';
   state.resultOwnerName = state.visitorName;
   state.view = 'loading';
+  setViewTheme('quiz');
 
   const phrases = [t('phrase1'), t('phrase2'), t('phrase3'), t('phrase4')];
 
@@ -1034,6 +1045,8 @@ function resultPortraitKicker(artwork) {
 
 function renderResult(result) {
   state.view = 'result';
+  setViewTheme('result');
+  destroyHomeAmbient();
   cleanupCollectionScrollHandler();
   state.result = result;
   state.frameClicks = 0;
@@ -1365,6 +1378,8 @@ function scrollCollectionToTop() {
 
 function renderCollection() {
   state.view = 'collection';
+  setViewTheme('collection');
+  destroyHomeAmbient();
   clearShareParamsFromUrl();
 
   const collectionArtworks = orderedCollectionArtworks();
@@ -1493,17 +1508,21 @@ function handleAction(event) {
       state.logoClicks += 1;
       if (state.logoClicks >= 5) {
         state.logoClicks = 0;
+        destroyHomeAmbient();
         renderCuratorEasterEgg();
         break;
       }
       if (state.view !== 'home') {
+        destroyHomeAmbient();
         renderHome();
       }
       break;
     case 'ticket':
-      state.ticketNumber = createTicketNumber();
-      renderTicket();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      runGalleryTransition(() => {
+        state.ticketNumber = createTicketNumber();
+        renderTicket();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
       break;
     case 'enter-quiz':
       if (!state.visitorName) {
@@ -1511,32 +1530,31 @@ function handleAction(event) {
         break;
       }
       saveVisitorName(state.visitorName);
-      state.questionIndex = 0;
-      state.answers = {};
-      state.result = null;
-      state.responseTimes = {};
-      state.questionClock = null;
-      state.resultOrigin = 'own';
-      state.resultOwnerName = state.visitorName;
-      renderQuiz();
+      runGalleryTransition(() => {
+        state.questionIndex = 0;
+        state.answers = {};
+        state.result = null;
+        state.resultOrigin = 'own';
+        state.resultOwnerName = state.visitorName;
+        renderQuiz();
+      });
       break;
     case 'answer':
       answerQuestion(event.currentTarget.dataset.value);
       break;
     case 'previous':
       if (state.questionIndex > 0) {
-        finishQuestionClock(questions[state.questionIndex].id);
         state.questionIndex -= 1;
         renderQuiz();
       }
       break;
     case 'exit-quiz':
       if (confirm(t('exitConfirm'))) {
-        state.questionClock = null;
         renderHome();
       }
       break;
     case 'collection':
+      destroyHomeAmbient();
       state.collectionExpanded = false;
       renderCollection();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1555,9 +1573,11 @@ function handleAction(event) {
       expandCollection();
       break;
     case 'restart':
-      state.ticketNumber = createTicketNumber();
-      renderTicket();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      runGalleryTransition(() => {
+        state.ticketNumber = createTicketNumber();
+        renderTicket();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
       break;
     case 'share':
       shareResult();
@@ -1661,31 +1681,18 @@ function resultFromSharedArtwork(artwork, profile, primaryMatch) {
   ];
   const withMatches = assignDisplayMatches(reordered);
 
-  let previousMatch = primaryMatch;
-  const companions = withMatches.slice(1, 4).map((item, index) => {
-    const match = clamp(
-      Math.min(item.match, previousMatch - 1, primaryMatch - (index + 1)),
-      60,
-      primaryMatch - 1
-    );
-    previousMatch = match;
-    return {
-      ...item,
-      match,
-    };
-  });
-
   return {
     profile,
     primary: {
-      artwork,
-      distance: primaryEntry.distance,
-      match: primaryMatch,
+      ...withMatches[0],
+      match: Number.isFinite(Number(primaryMatch))
+        ? Number(primaryMatch)
+        : withMatches[0].match,
     },
-    companions,
+    companions: withMatches.slice(1, 4),
     unlockedHidden: artwork.hidden
-      ? [{ artwork, match: primaryMatch, distance: primaryEntry.distance }]
-      : [],
+      ? [{ artwork, distance: primaryEntry.distance, match: withMatches[0].match }]
+      : withMatches.filter((item) => item.artwork.hidden),
   };
 }
 
