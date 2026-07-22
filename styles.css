@@ -449,7 +449,7 @@ img {
 }
 
 .art-image.image-failed .image-skeleton::before {
-  content: "图像待补充";
+  content: "原作图像暂时未能载入";
   position: absolute;
   color: rgba(255,255,255,.75);
   font-family: var(--serif);

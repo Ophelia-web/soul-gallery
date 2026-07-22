@@ -15,7 +15,8 @@ Soul Gallery 是一场以世界名画为结果的人格体验。用户回答 32 
 - 每幅画的独立人格文案、阴影面与成长提示
 - 结果页、相邻馆藏、博物馆信息与分享链接
 - 两处隐藏彩蛋：连续点击 Logo 五次；结果页点击画框三次
-- Wikimedia Commons 高清图像动态检索与来源链接
+- Wikimedia Commons 已核验精确文件在线载入与来源链接
+- `scripts/audit-commons.mjs` 图像审计脚本
 - Render Blueprint 配置
 
 ## 技术结构
@@ -35,6 +36,9 @@ soul-gallery/
 │   └── scoring.js
 ├── assets/
 │   └── favicon.svg
+├── scripts/
+│   └── audit-commons.mjs
+├── IMAGE_AUDIT.md
 ├── render.yaml
 ├── site.webmanifest
 └── README.md
@@ -74,26 +78,15 @@ https://your-site.onrender.com/?result=starry-night
 
 ## 图像策略
 
-第一版不会把 54 张大图直接提交进 GitHub。浏览器会根据每幅画的精确英文标题与作者，从 Wikimedia Commons API 请求约 1600–1900px 的图像，并缓存于当前浏览器会话。
+每幅作品在 `data/artworks.js` 中绑定精确的 Wikimedia Commons `commonsFile` 文件名。页面通过 Commons API 的 `titles` 参数请求该精确文件的缩略图，不进行自由文本搜索，也不采用搜索结果中的第一张图。
 
-这样可以保持仓库轻量，也能在结果页提供原始文件来源。但自动检索仍可能遇到以下情况：
+核验范围包括文件名、作者、作品名、分辨率与长宽比。可用以下命令重新检查全部资源：
 
-- 某幅画出现错误版本或局部图
-- 中文长卷返回的不是完整长卷
-- 私人收藏作品只有较低分辨率版本
-- Wikimedia 在用户网络环境中加载较慢
+```bash
+node scripts/audit-commons.mjs
+```
 
-最需要人工复核的作品包括：
-
-- 《授勋》
-- 《戈黛娃夫人》
-- 《玫瑰之魂》
-- 《塔楼阶梯上的相会》
-- 《清明上河图》
-- 《韩熙载夜宴图》
-- 《千里江山图》
-
-后续如需完全控制画质，可以把确认过的高清图放入 `assets/paintings/`，然后在 `data/artworks.js` 中为对应作品添加本地图像路径，并让 `app.js` 优先使用本地图像。
+图片仍然在线加载，不会进入 GitHub 仓库。本轮核验结果见 `IMAGE_AUDIT.md`。
 
 ## 人格算法
 
@@ -114,12 +107,12 @@ https://your-site.onrender.com/?result=starry-night
 
 ## 下一阶段建议
 
-- 逐幅人工确认高清图和版权标记
 - 生成适合小红书、朋友圈和 Instagram 的结果海报
 - 加入中英双语切换
 - 用真实用户测试数据校准题目与画作人格轮廓
 - 增加匿名统计，观察结果分布和隐藏画作触发率
 - 为每幅画增加历史背景与所在博物馆链接
+- 持续用 `node scripts/audit-commons.mjs` 回归检查 Commons 文件可用性
 
 ## License
 
