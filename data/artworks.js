@@ -317,7 +317,7 @@ export const artworks = [
     growth: '保留直觉，也给它一个可以落地的时间表。',
     growthEn: 'Keep intuition, and give it a schedule where it can land.',
     commonsFile: 'Claude Monet, Impression, soleil levant.jpg',
-    profile: [42, 24, 58, 82, 66, 91, 62, 84]
+    profile: [36, 20, 52, 86, 48, 94, 58, 88]
   }),
   artwork({
     id: 'the-swing',
@@ -344,7 +344,7 @@ export const artworks = [
     growth: '真正的自由既包括荡得更高，也包括愿意在该落地时落地。',
     growthEn: 'Freedom includes swinging higher, and landing when it is time.',
     commonsFile: 'Joean Honoré Fragonard - The Swing.jpg',
-    profile: [28, 18, 72, 75, 80, 92, 66, 92]
+    profile: [53, 36, 65, 63, 68, 71, 60, 67]
   }),
   artwork({
     id: 'wanderer-fog',
@@ -884,7 +884,7 @@ export const artworks = [
     growth: '有时不必只看灯下的人；主动为自己留一张桌。',
     growthEn: 'Reserve a table for yourself, not only watch the lamps.',
     commonsFile: 'Vincent Willem van Gogh - Cafe Terrace at Night (Yorck).jpg',
-    profile: [66, 42, 66, 82, 62, 72, 48, 82]
+    profile: [80, 56, 80, 96, 48, 86, 34, 96]
   }),
   artwork({
     id: 'bedroom-arles',
@@ -965,7 +965,7 @@ export const artworks = [
     growth: '不同并不必然等于孤立；给别人一次靠近你的机会。',
     growthEn: 'Difference need not mean isolation; give someone a chance to approach.',
     commonsFile: 'Irises-Vincent van Gogh.jpg',
-    profile: [72, 48, 76, 82, 54, 80, 56, 80]
+    profile: [86, 62, 90, 96, 40, 94, 42, 94]
   }),
   artwork({
     id: 'red-vineyard',
@@ -1154,7 +1154,7 @@ export const artworks = [
     growth: '保留轻快，也为自己准备一把真正可靠的伞。',
     growthEn: 'Keep the lightness, and prepare a dependable umbrella.',
     commonsFile: 'Hiroshige, Sudden shower over Shin-Ōhashi bridge and Atake, 1857.jpg',
-    profile: [38, 34, 56, 68, 76, 84, 76, 82]
+    profile: [24, 20, 42, 82, 90, 98, 90, 96]
   }),
   artwork({
     id: 'the-dream-rousseau',
@@ -1403,7 +1403,7 @@ export const artworks = [
     growth: '保留对转场的敏感，也给都市一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to transition, and give city one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Pierre-Auguste Renoir, The Umbrellas, ca. 1881-86.jpg',
-    profile: [40, 60, 54, 66, 82, 68, 64, 74]
+    profile: [26, 74, 40, 80, 96, 54, 78, 88]
   }),
   artwork({
     id: 'girls-at-piano',
@@ -1484,7 +1484,7 @@ export const artworks = [
     growth: '保留对瞬间的敏感，也给明亮一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to instant, and give brightness one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Claude Monet - Woman with a Parasol - Madame Monet and Her Son - Google Art Project.jpg',
-    profile: [58, 34, 60, 82, 62, 86, 66, 94]
+    profile: [72, 20, 46, 96, 48, 100, 80, 100]
   }),
   artwork({
     id: 'poppy-field',
@@ -1754,7 +1754,7 @@ export const artworks = [
     growth: '保留对倦意的敏感，也给反规矩一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to drowsiness, and give rule-resistance one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Mary Cassatt, Little Girl in a Blue Armchair, 1878, NGA 61368.jpg',
-    profile: [46, 22, 56, 62, 54, 80, 40, 72]
+    profile: [32, 8, 42, 48, 40, 94, 26, 86]
   }),
   artwork({
     id: 'boating-party-cassatt',
@@ -1970,7 +1970,7 @@ export const artworks = [
     growth: '保留对等待的敏感，也给间隔一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to waiting, and give interval one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Edouard Manet - The Railway - Google Art Project.jpg',
-    profile: [68, 62, 64, 66, 52, 82, 58, 52]
+    profile: [82, 76, 50, 80, 38, 96, 44, 38]
   }),
   artwork({
     id: 'balcony-manet',
@@ -2402,7 +2402,7 @@ export const artworks = [
     growth: '保留对冲动的敏感，也给心跳一个具体动作；美感需要落到今天。让今天先出现一点回声。',
     growthEn: 'Keep your sensitivity to impulse, and give heartbeat one concrete action today. Let today produce one small echo first.',
     commonsFile: 'Jean-Honoré Fragonard - The Stolen Kiss.jpg',
-    profile: [38, 30, 78, 82, 76, 86, 62, 80]
+    profile: [58, 48, 84, 88, 72, 62, 44, 70]
   }),
   artwork({
     id: 'madame-pompadour',
