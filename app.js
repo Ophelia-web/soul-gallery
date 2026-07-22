@@ -123,9 +123,9 @@ function createTicketNumber() {
 const TICKET_TEMPLATE_PATH = './assets/branding/soul-gallery-ticket-template.png';
 const TICKET_CANVAS_WIDTH = 1536;
 const TICKET_CANVAS_HEIGHT = 1024;
-const TICKET_SUFFIX_X = 1354;
-const TICKET_SUFFIX_Y = 571;
-const TICKET_SUFFIX_MAX_WIDTH = 80;
+const TICKET_SUFFIX_X = 1352;
+const TICKET_SUFFIX_Y = 568;
+const TICKET_SUFFIX_MAX_WIDTH = 70;
 const TICKET_NAME_FONT =
   '"Baskerville", "Iowan Old Style", "Songti SC", "STSong", "SimSun", serif';
 
