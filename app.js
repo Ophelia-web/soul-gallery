@@ -1,8 +1,6 @@
 import {
   artworks,
   artworkById,
-  DIMENSIONS,
-  TEMPO_DIMENSION,
   visibleArtworks,
   hiddenArtworks,
 } from './data/artworks.js';

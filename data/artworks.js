@@ -3201,7 +3201,7 @@ export const artworks = [
   }),
   artwork({
     id: 'blue-window-matisse',
-    titleZh: '蓝窗',
+    titleZh: '蓝色窗户',
     titleEn: 'The Blue Window',
     artist: '亨利·马蒂斯',
     artistEn: 'Henri Matisse',
@@ -3259,7 +3259,7 @@ export const artworks = [
   }),
   artwork({
     id: 'young-girl-reading',
-    titleZh: '读书少女',
+    titleZh: '读书的少女',
     titleEn: 'Young Girl Reading',
     artist: '让-奥诺雷·弗拉戈纳尔',
     artistEn: 'Jean-Honoré Fragonard',
