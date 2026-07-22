@@ -1,10 +1,44 @@
-import { artworks, artworkById, DIMENSIONS, visibleArtworks, hiddenArtworks } from './data/artworks.js';
+import {
+  artworks,
+  artworkById,
+  DIMENSIONS,
+  TEMPO_DIMENSION,
+  visibleArtworks,
+  hiddenArtworks,
+} from './data/artworks.js';
 import { questions } from './data/questions.js';
-import { getResult, profileForArtwork, strongestDimensions } from './lib/scoring.js';
+import { UI } from './data/i18n.js';
+import {
+  getResult,
+  profileForArtwork,
+  strongestDimensions,
+  spectrumDimensions,
+} from './lib/scoring.js';
 import { hydrateArtworkImages } from './lib/commons.js';
 
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
+const LANGUAGE_STORAGE_KEY = 'soul-gallery:language';
+
+function getInitialLanguage() {
+  const params = new URLSearchParams(location.search);
+  const queryLanguage = params.get('lang');
+
+  if (queryLanguage === 'en' || queryLanguage === 'zh') {
+    return queryLanguage;
+  }
+
+  try {
+    const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (saved === 'en' || saved === 'zh') {
+      return saved;
+    }
+  } catch {
+    // ignore
+  }
+
+  return 'zh';
+}
 
 const state = {
   view: 'home',
@@ -13,6 +47,9 @@ const state = {
   result: null,
   logoClicks: 0,
   frameClicks: 0,
+  language: getInitialLanguage(),
+  responseTimes: {},
+  questionClock: null,
 };
 
 const featuredIds = [
@@ -24,16 +61,140 @@ const featuredIds = [
   'early-spring',
 ];
 
+document.documentElement.lang = state.language === 'en' ? 'en' : 'zh-CN';
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    pauseQuestionClock();
+  } else {
+    resumeQuestionClock();
+  }
+});
+
+function t(key, ...args) {
+  const table = UI[state.language] || UI.zh;
+  const value = table[key] ?? UI.zh[key] ?? key;
+  return typeof value === 'function' ? value(...args) : value;
+}
+
+function setLanguage(language) {
+  state.language = language === 'en' ? 'en' : 'zh';
+
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, state.language);
+  } catch {
+    // ignore
+  }
+
+  document.documentElement.lang = state.language === 'en' ? 'en' : 'zh-CN';
+  document.title = t('pageTitle');
+
+  const url = new URL(location.href);
+  url.searchParams.set('lang', state.language);
+  history.replaceState({}, '', url);
+
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  if (state.view === 'quiz') {
+    renderQuiz();
+    return;
+  }
+  if (state.view === 'result' && state.result) {
+    const shared = new URLSearchParams(location.search).has('result');
+    renderResult(state.result, { shared });
+    return;
+  }
+  if (state.view === 'collection') {
+    renderCollection();
+    return;
+  }
+  if (state.view === 'about') {
+    renderAbout();
+    return;
+  }
+  if (state.view === 'loading') {
+    return;
+  }
+  renderHome();
+}
+
+function localizedField(item, field) {
+  if (state.language === 'en') {
+    return item[`${field}En`] ?? item[field];
+  }
+  return item[field];
+}
+
+function localizedQuestionPrompt(question) {
+  return state.language === 'en' ? question.promptEn : question.prompt;
+}
+
+function localizedQuestionNote(question) {
+  return state.language === 'en' ? question.noteEn : question.note;
+}
+
+function localizedOptionLabel(option) {
+  return state.language === 'en' ? option.labelEn : option.label;
+}
+
+function localizedArtworkTitle(artwork) {
+  return state.language === 'en' ? artwork.titleEn : artwork.titleZh;
+}
+
+function localizedArtworkKeywords(artwork) {
+  return state.language === 'en' ? artwork.keywordsEn : artwork.keywords;
+}
+
+function bilingualEyebrow(english, chinese) {
+  if (state.language === 'en') {
+    return `
+      <p class="eyebrow">
+        <span>${english}</span>
+      </p>
+    `;
+  }
+
+  return `
+    <p class="eyebrow eyebrow--bilingual">
+      <span>${english}</span>
+      <small>${chinese}</small>
+    </p>
+  `;
+}
+
+function bilingualInline(english, chinese) {
+  if (state.language === 'en') {
+    return english;
+  }
+  return `${english}<br />${chinese}`;
+}
+
+function syncLangInUrl(extra = {}) {
+  const url = new URL(location.href);
+  url.searchParams.set('lang', state.language);
+  Object.entries(extra).forEach(([key, value]) => {
+    if (value == null) {
+      url.searchParams.delete(key);
+    } else {
+      url.searchParams.set(key, value);
+    }
+  });
+  history.replaceState({}, '', url);
+}
+
 function artworkImageMarkup(artwork, { className = '', width = 1200, eager = false } = {}) {
   const palette = artwork.palette || ['#4f5c52', '#9a8062', '#d1ba92'];
   const commonsFile = artwork.commonsFile || '';
+  const alt = `${localizedArtworkTitle(artwork)} · ${artwork.titleEn}`;
 
   return `
     <figure
       class="art-image ${className}"
       data-art-image
       data-file="${commonsFile.replaceAll('"', '&quot;')}"
-      data-alt="${artwork.titleZh} · ${artwork.titleEn}"
+      data-alt="${alt.replaceAll('"', '&quot;')}"
       data-width="${width}"
       style="--art-a:${palette[0]};--art-b:${palette[1]};--art-c:${palette[2]}"
     >
@@ -51,69 +212,120 @@ function shell(content, { minimal = false } = {}) {
   return `
     <div class="site-shell ${minimal ? 'site-shell--minimal' : ''}">
       <header class="site-header">
-        <button class="brand" data-action="home" aria-label="返回首页">
+        <button class="brand" data-action="home" aria-label="${t('navHomeAria')}">
           <span class="brand-mark" aria-hidden="true"><i></i></span>
           <span class="brand-copy">
             <strong>Soul Gallery</strong>
-            <small>灵魂画廊</small>
+            <small>${t('brandSmall')}</small>
           </span>
         </button>
-        <nav class="header-nav" aria-label="主导航">
-          <button data-action="collection">馆藏目录</button>
-          <button data-action="about">观展须知</button>
+        <nav class="header-nav" aria-label="${t('navMainAria')}">
+          <button data-action="collection">${t('navCollection')}</button>
+          <button data-action="about">${t('navAbout')}</button>
+          <button
+            class="lang-switch"
+            data-action="toggle-language"
+            aria-label="${t('langSwitchAria')}"
+          >${t('langSwitch')}</button>
         </nav>
       </header>
       <main>${content}</main>
       <footer class="site-footer">
         <div>
-          <span>Soul Gallery · 灵魂画廊</span>
-          <span>Discover the masterpiece that reflects your soul.</span>
+          <span>Soul Gallery · ${t('brandSmall')}</span>
+          <span>${t('footerTagline')}</span>
         </div>
-        <p>这是一场审美化的人格体验，不用于心理诊断。画作图像由 Wikimedia Commons 按已核验的文件来源在线载入，版权状态以原始来源页为准。</p>
+        <p>${t('footerLegal')}</p>
       </footer>
     </div>
   `;
 }
 
+function startQuestionClock(questionId) {
+  state.questionClock = {
+    questionId,
+    visibleElapsed: 0,
+    activeSince: document.hidden ? null : performance.now(),
+  };
+}
+
+function pauseQuestionClock() {
+  const clock = state.questionClock;
+
+  if (!clock || clock.activeSince === null) {
+    return;
+  }
+
+  clock.visibleElapsed += performance.now() - clock.activeSince;
+  clock.activeSince = null;
+}
+
+function resumeQuestionClock() {
+  const clock = state.questionClock;
+
+  if (!clock || clock.activeSince !== null || document.hidden) {
+    return;
+  }
+
+  clock.activeSince = performance.now();
+}
+
+function finishQuestionClock(questionId) {
+  const clock = state.questionClock;
+
+  if (!clock || clock.questionId !== questionId) {
+    return null;
+  }
+
+  pauseQuestionClock();
+
+  const elapsed = Math.min(45000, Math.max(450, clock.visibleElapsed));
+  state.questionClock = null;
+  return elapsed;
+}
+
 function renderHome() {
   state.view = 'home';
-  history.replaceState({}, '', location.pathname);
+  syncLangInUrl({ result: null });
 
-  const featured = featuredIds.map((id, index) => {
-    const artwork = artworkById[id];
-    return `
+  const featured = featuredIds
+    .map((id, index) => {
+      const artwork = artworkById[id];
+      return `
       <div class="hero-art hero-art--${index + 1}">
         ${artworkImageMarkup(artwork, { width: 900, eager: index < 2 })}
-        <span>${artwork.titleZh}</span>
+        <span>${localizedArtworkTitle(artwork)}</span>
       </div>
     `;
-  }).join('');
+    })
+    .join('');
 
   app.innerHTML = shell(`
     <section class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">A PERSONALITY EXHIBITION · 2026</p>
-        <h1>你的灵魂，<br />早已被一位画家画过。</h1>
-        <p class="hero-intro">回答 32 个关于日常选择的问题。你不需要懂艺术，只需要凭第一反应，找到那幅一直在等你的画。</p>
+        ${bilingualEyebrow(`${t('heroEyebrowEn')} · 2026`, t('heroEyebrowZh'))}
+        <h1>${t('heroTitle')}</h1>
+        <p class="hero-intro">${t('heroIntro')}</p>
         <div class="hero-actions">
           <button class="button button--primary" data-action="start">
-            <span>领取入馆券</span><i aria-hidden="true">→</i>
+            <span>${t('startCta')}</span><i aria-hidden="true">→</i>
           </button>
-          <button class="button button--ghost" data-action="collection">先看馆藏</button>
+          <button class="button button--ghost" data-action="collection">${t('collectionCta')}</button>
         </div>
         <dl class="hero-facts">
-          <div><dt>32</dt><dd>道日常选择</dd></div>
-          <div><dt>48</dt><dd>幅公开馆藏</dd></div>
-          <div><dt>6</dt><dd>幅隐藏画作</dd></div>
+          <div><dt>32</dt><dd>${t('factChoices')}</dd></div>
+          <div><dt>108</dt><dd>${t('factPublic')}</dd></div>
+          <div><dt>12</dt><dd>${t('factHidden')}</dd></div>
         </dl>
       </div>
-      <div class="hero-gallery" aria-label="部分馆藏预览">
+      <div class="hero-gallery" aria-label="${state.language === 'en' ? 'Collection preview' : '部分馆藏预览'}">
         <div class="gallery-glow"></div>
         ${featured}
         <div class="museum-label">
-          <span>ROOM 01</span>
-          <strong>THE INNER COLLECTION</strong>
-          <small>请勿寻找正确答案</small>
+          <span>${t('roomLabel')}</span>
+          <strong>${t('innerCollectionEn')}</strong>
+          ${state.language === 'zh' ? `<small>${t('innerCollectionZh')}</small>` : ''}
+          <small>${t('noRightAnswer')}</small>
         </div>
       </div>
     </section>
@@ -121,37 +333,37 @@ function renderHome() {
     <section class="manifesto section-frame">
       <div class="section-number">01</div>
       <div>
-        <p class="eyebrow">CURATOR'S NOTE</p>
-        <h2>这不是一场艺术常识考试。</h2>
+        ${bilingualEyebrow(t('curatorNoteEn'), t('curatorNoteZh'))}
+        <h2>${t('manifestoTitle')}</h2>
       </div>
       <div class="manifesto-copy">
-        <p>我们不会问你是否认识莫奈，也不会让你在梵高和维米尔之间选择喜好。问题发生在更普通的地方：一次雨天、一段沉默、一个临时改变的计划。</p>
-        <p>最终结果不是“你最喜欢哪幅画”，而是<strong>哪幅画的节奏、光线与情绪结构，最接近你处理世界的方式。</strong></p>
+        <p>${t('manifestoP1')}</p>
+        <p>${t('manifestoP2Before')}<strong>${t('manifestoP2Strong')}</strong></p>
       </div>
     </section>
 
     <section class="experience-grid">
       <article>
         <span>Ⅰ</span>
-        <h3>凭第一反应</h3>
-        <p>犹豫太久时，人会开始回答“理想中的自己”。真正的你通常出现在最先闪过的选择里。</p>
+        <h3>${t('step1Title')}</h3>
+        <p>${t('step1Body')}</p>
       </article>
       <article>
         <span>Ⅱ</span>
-        <h3>接受复杂结果</h3>
-        <p>你会得到一幅主画、三幅相邻馆藏和八项人格光谱。没有任何一幅画比另一幅更高级。</p>
+        <h3>${t('step2Title')}</h3>
+        <p>${t('step2Body')}</p>
       </article>
       <article>
         <span>Ⅲ</span>
-        <h3>留意隐藏展厅</h3>
-        <p>六幅画不会出现在公开目录里。它们只在某些极少见的人格组合出现时，悄悄打开门。</p>
+        <h3>${t('step3Title')}</h3>
+        <p>${t('step3Body')}</p>
       </article>
     </section>
 
     <section class="closing-cta">
-      <p class="eyebrow">ADMISSION IS FREE</p>
-      <h2>世界名画正在寻找它真正的主人。</h2>
-      <button class="button button--primary button--large" data-action="start">现在入场 <i>→</i></button>
+      ${bilingualEyebrow(t('admissionEn'), t('admissionZh'))}
+      <h2>${t('closingTitle')}</h2>
+      <button class="button button--primary button--large" data-action="start">${t('enterNow')} <i>→</i></button>
     </section>
   `);
 
@@ -166,9 +378,10 @@ function renderQuiz() {
   const progress = Math.round((state.questionIndex / questions.length) * 100);
   const selectedValue = state.answers[question.id];
 
-  app.innerHTML = shell(`
+  app.innerHTML = shell(
+    `
     <section class="quiz-page">
-      <div class="quiz-progress" aria-label="答题进度">
+      <div class="quiz-progress" aria-label="${t('quizProgressAria')}">
         <div class="progress-meta">
           <span>ROOM ${String(Math.ceil(current / 8)).padStart(2, '0')}</span>
           <span>${String(current).padStart(2, '0')} / ${questions.length}</span>
@@ -178,11 +391,13 @@ function renderQuiz() {
 
       <div class="question-card" data-question-card>
         <div class="question-index">${String(current).padStart(2, '0')}</div>
-        <p class="eyebrow">A SMALL DECISION</p>
-        <h1>${question.prompt}</h1>
-        <p class="question-note">${question.note}</p>
-        <div class="options" role="radiogroup" aria-label="选择一个最接近你的答案">
-          ${question.options.map((option, index) => `
+        ${bilingualEyebrow(t('smallDecisionEn'), t('smallDecisionZh'))}
+        <h1>${localizedQuestionPrompt(question)}</h1>
+        <p class="question-note">${localizedQuestionNote(question)}</p>
+        <div class="options" role="radiogroup" aria-label="${t('optionsAria')}">
+          ${question.options
+            .map(
+              (option, index) => `
             <button
               class="option ${selectedValue === option.value ? 'is-selected' : ''}"
               data-action="answer"
@@ -191,25 +406,38 @@ function renderQuiz() {
               aria-checked="${selectedValue === option.value}"
             >
               <span>${String.fromCharCode(65 + index)}</span>
-              <strong>${option.label}</strong>
+              <strong>${localizedOptionLabel(option)}</strong>
               <i aria-hidden="true">↗</i>
             </button>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
       </div>
 
       <div class="quiz-controls">
-        <button class="text-button" data-action="previous" ${state.questionIndex === 0 ? 'disabled' : ''}>← 上一题</button>
-        <button class="text-button" data-action="exit-quiz">暂时离馆</button>
+        <button class="text-button" data-action="previous" ${state.questionIndex === 0 ? 'disabled' : ''}>${t('previous')}</button>
+        <button class="text-button" data-action="exit-quiz">${t('exitQuiz')}</button>
       </div>
     </section>
-  `, { minimal: true });
+  `,
+    { minimal: true }
+  );
 
   bindGlobalActions();
+  requestAnimationFrame(() => {
+    startQuestionClock(question.id);
+  });
 }
 
 function answerQuestion(value) {
   const question = questions[state.questionIndex];
+  const responseTime = finishQuestionClock(question.id);
+
+  if (typeof responseTime === 'number') {
+    state.responseTimes[question.id] = responseTime;
+  }
+
   state.answers[question.id] = Number(value);
 
   const card = document.querySelector('[data-question-card]');
@@ -226,24 +454,19 @@ function answerQuestion(value) {
 }
 
 function beginCuration() {
-  state.result = getResult(state.answers, questions);
+  state.result = getResult(state.answers, questions, state.responseTimes);
   state.view = 'loading';
 
-  const phrases = [
-    '正在比对你的情绪光谱',
-    '正在穿过四十八间公开展厅',
-    '正在确认隐藏馆藏是否为你开门',
-    '正在把最后一束光放进画框',
-  ];
+  const phrases = [t('phrase1'), t('phrase2'), t('phrase3'), t('phrase4')];
 
   app.innerHTML = `
     <main class="curation-page">
       <div class="curation-orbit" aria-hidden="true"><i></i><i></i><i></i></div>
-      <p class="eyebrow">THE CURATOR IS WORKING</p>
-      <h1>请在展厅中央稍候。</h1>
+      ${bilingualEyebrow(t('curatorWorkingEn'), t('curatorWorkingZh'))}
+      <h1>${t('curationTitle')}</h1>
       <p class="curation-status" data-curation-status>${phrases[0]}</p>
       <div class="curation-line"><i></i></div>
-      <small>不要刷新页面。你的画正在被取下。</small>
+      <small>${t('curationWait')}</small>
     </main>
   `;
 
@@ -251,7 +474,9 @@ function beginCuration() {
   const interval = window.setInterval(() => {
     index += 1;
     const node = document.querySelector('[data-curation-status]');
-    if (node && phrases[index]) node.textContent = phrases[index];
+    if (node && phrases[index]) {
+      node.textContent = phrases[index];
+    }
   }, 560);
 
   window.setTimeout(() => {
@@ -264,20 +489,28 @@ function resultNumber(artwork, match) {
   const date = new Date();
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0');
-  const index = String(artworks.findIndex((item) => item.id === artwork.id) + 1).padStart(2, '0');
+  const index = String(artworks.findIndex((item) => item.id === artwork.id) + 1).padStart(
+    3,
+    '0'
+  );
   return `SG-${date.getFullYear()}${month}${day}-${index}-${match}`;
 }
 
 function profileBars(profile) {
-  return DIMENSIONS.map((dimension) => {
-    const value = Math.round(profile[dimension.key]);
-    return `
+  return spectrumDimensions()
+    .map((dimension) => {
+      const value = Math.round(profile[dimension.key] ?? 50);
+      const low = localizedField(dimension, 'low');
+      const high = localizedField(dimension, 'high');
+      const label = localizedField(dimension, 'label');
+      return `
       <div class="spectrum-row">
-        <div class="spectrum-label"><span>${dimension.low}</span><strong>${dimension.label}</strong><span>${dimension.high}</span></div>
+        <div class="spectrum-label"><span>${low}</span><strong>${label}</strong><span>${high}</span></div>
         <div class="spectrum-track"><i style="width:${value}%"></i><b style="left:${value}%"></b></div>
       </div>
     `;
-  }).join('');
+    })
+    .join('');
 }
 
 function renderResult(result, { shared = false } = {}) {
@@ -289,16 +522,18 @@ function renderResult(result, { shared = false } = {}) {
   const profile = result.profile;
   const strongest = strongestDimensions(profile, 3);
   const number = resultNumber(artwork, match);
-  const url = new URL(location.href);
-  url.searchParams.set('result', artwork.id);
-  history.replaceState({}, '', url);
+
+  syncLangInUrl({ result: artwork.id });
   saveResult(artwork.id);
+
+  const kickerEn = artwork.hidden ? t('hiddenUnlockedEn') : t('soulPortraitEn');
+  const kickerZh = artwork.hidden ? t('hiddenUnlockedZh') : t('soulPortraitZh');
 
   app.innerHTML = shell(`
     <section class="result-hero">
       <div class="result-kicker">
-        <span>${artwork.hidden ? 'HIDDEN COLLECTION UNLOCKED' : 'YOUR SOUL PORTRAIT'}</span>
-        <span>馆藏编号 ${number}</span>
+        <span>${state.language === 'zh' ? `${kickerEn} · ${kickerZh}` : kickerEn}</span>
+        <span>${t('collectionNumber')} ${number}</span>
       </div>
       <div class="result-layout">
         <div class="result-art-column">
@@ -306,21 +541,23 @@ function renderResult(result, { shared = false } = {}) {
             ${artworkImageMarkup(artwork, { className: 'result-art', width: 1900, eager: true })}
             <div class="frame-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
           </div>
-          <button class="source-link" data-action="open-source">查看高清图像来源 ↗</button>
+          <button class="source-link" data-action="open-source">${t('openSource')}</button>
         </div>
         <div class="result-copy">
-          ${artwork.hidden ? '<div class="hidden-seal">隐藏馆藏 · 仅为少数人格开放</div>' : ''}
-          <p class="eyebrow">${artwork.movement} · ${artwork.year}</p>
-          <h1>${artwork.titleZh}</h1>
-          <h2>${artwork.titleEn}</h2>
-          <p class="artist">${artwork.artist}</p>
-          <div class="match-score"><strong>${match}</strong><span>%<small>灵魂契合度</small></span></div>
-          <blockquote>“${artwork.tagline}”</blockquote>
-          <p class="main-reading">${artwork.reading}</p>
-          <div class="keyword-row">${artwork.keywords.map((keyword) => `<span>${keyword}</span>`).join('')}</div>
+          ${artwork.hidden ? `<div class="hidden-seal">${t('hiddenSeal')}</div>` : ''}
+          <p class="eyebrow">${localizedField(artwork, 'movement')} · ${artwork.year}</p>
+          <h1>${localizedArtworkTitle(artwork)}</h1>
+          ${state.language === 'zh' ? `<h2>${artwork.titleEn}</h2>` : ''}
+          <p class="artist">${localizedField(artwork, 'artist')}</p>
+          <div class="match-score"><strong>${match}</strong><span>%<small>${t('matchLabel')}</small></span></div>
+          <blockquote>“${localizedField(artwork, 'tagline')}”</blockquote>
+          <p class="main-reading">${localizedField(artwork, 'reading')}</p>
+          <div class="keyword-row">${localizedArtworkKeywords(artwork)
+            .map((keyword) => `<span>${keyword}</span>`)
+            .join('')}</div>
           <div class="result-actions">
-            <button class="button button--primary" data-action="share">分享这幅画 <i>↗</i></button>
-            <button class="button button--ghost" data-action="restart">重新观展</button>
+            <button class="button button--primary" data-action="share">${t('share')} <i>↗</i></button>
+            <button class="button button--ghost" data-action="restart">${t('restart')}</button>
           </div>
         </div>
       </div>
@@ -329,77 +566,82 @@ function renderResult(result, { shared = false } = {}) {
     <section class="interpretation section-frame">
       <div class="section-number">02</div>
       <div class="interpretation-title">
-        <p class="eyebrow">READING THE BACK OF THE CANVAS</p>
-        <h2>画框背面，也写着你。</h2>
+        ${bilingualEyebrow(t('readingBackEn'), t('readingBackZh'))}
+        <h2>${t('readingBackTitle')}</h2>
       </div>
       <div class="interpretation-cards">
         <article>
-          <span>你的天赋</span>
+          <span>${t('talent')}</span>
           <p>${strengthNarrative(strongest)}</p>
         </article>
         <article>
-          <span>容易忽略的阴影</span>
-          <p>${artwork.shadow}</p>
+          <span>${t('shadowLabel')}</span>
+          <p>${localizedField(artwork, 'shadow')}</p>
         </article>
         <article>
-          <span>下一笔可以画在哪里</span>
-          <p>${artwork.growth}</p>
+          <span>${t('growthLabel')}</span>
+          <p>${localizedField(artwork, 'growth')}</p>
         </article>
       </div>
     </section>
 
     <section class="spectrum-section">
       <div class="spectrum-heading">
-        <p class="eyebrow">YOUR INNER SPECTRUM</p>
-        <h2>你在八条光谱上的位置</h2>
-        <p>这些数值不是评分。它们只是说明，你习惯从哪一侧进入世界。</p>
+        ${bilingualEyebrow(t('spectrumEn'), t('spectrumZh'))}
+        <h2>${t('spectrumTitle')}</h2>
+        <p>${t('spectrumIntro')}</p>
+        <p class="tempo-note">${t('tempoNote')}</p>
       </div>
       <div class="spectrum-panel">${profileBars(profile)}</div>
     </section>
 
     <section class="companions-section">
       <div class="companions-heading">
-        <p class="eyebrow">THE NEIGHBOURING ROOMS</p>
-        <h2>与你相邻的三间展厅</h2>
+        ${bilingualEyebrow(t('neighboursEn'), t('neighboursZh'))}
+        <h2>${t('neighboursTitle')}</h2>
       </div>
       <div class="companion-grid">
-        ${result.companions.map(({ artwork: companion, match: companionMatch }, index) => `
+        ${result.companions
+          .map(
+            ({ artwork: companion, match: companionMatch }, index) => `
           <article class="companion-card">
             ${artworkImageMarkup(companion, { width: 900 })}
             <div>
               <span>0${index + 1}</span>
-              <h3>${companion.titleZh}</h3>
-              <p>${companion.tagline}</p>
-              <small>${companionMatch}% 相邻契合</small>
+              <h3>${localizedArtworkTitle(companion)}</h3>
+              <p>${localizedField(companion, 'tagline')}</p>
+              <small>${companionMatch}% ${t('neighbourMatch')}</small>
             </div>
           </article>
-        `).join('')}
+        `
+          )
+          .join('')}
       </div>
     </section>
 
     <section class="museum-card">
       <div>
-        <p class="eyebrow">WHERE THE ORIGINAL LIVES</p>
-        <h2>现在，真正的它在这里。</h2>
+        ${bilingualEyebrow(t('museumEn'), t('museumZh'))}
+        <h2>${t('museumTitle')}</h2>
       </div>
       <div class="museum-details">
-        <strong>${artwork.museum}</strong>
-        <span>${artwork.city}</span>
-        <p>有一天经过这座城市时，也许你可以去看看这幅真正照见过你的画。</p>
+        <strong>${localizedField(artwork, 'museum')}</strong>
+        <span>${localizedField(artwork, 'city')}</span>
+        <p>${t('museumBody')}</p>
       </div>
     </section>
 
     <section class="result-final">
-      <p>${shared ? '这是朋友分享给你的灵魂画像。' : '一幅画无法定义你，但它也许替你照亮了一个角落。'}</p>
-      <button class="text-button text-button--large" data-action="restart">再走一次不同的路线 →</button>
+      <p>${shared ? t('sharedResult') : t('ownResult')}</p>
+      <button class="text-button text-button--large" data-action="restart">${t('walkAgain')}</button>
     </section>
 
     <dialog class="secret-dialog" data-secret-dialog>
-      <button data-action="close-secret" aria-label="关闭">×</button>
-      <p class="eyebrow">A NOTE BEHIND THE FRAME</p>
-      <h2>馆员偷偷留给你一句话</h2>
+      <button data-action="close-secret" aria-label="${t('close')}">×</button>
+      ${bilingualEyebrow(t('noteBehindEn'), t('noteBehindZh'))}
+      <h2>${t('secretTitle')}</h2>
       <p>${secretNote(artwork)}</p>
-      <small>你发现了结果页的小彩蛋。不是每个人都会点击画框三次。</small>
+      <small>${t('secretHint')}</small>
     </dialog>
   `);
 
@@ -408,63 +650,116 @@ function renderResult(result, { shared = false } = {}) {
 }
 
 function strengthNarrative(strongest) {
-  return strongest.map((item) => {
-    const direction = item.value >= 50 ? item.high : item.low;
-    return `${direction}`;
-  }).join('、') + '构成了你最鲜明的底色。你不需要把这些特质推到极致，它们已经在许多选择里替你建立了独特的节奏。';
+  const joined = strongest
+    .map((item) => {
+      const direction =
+        item.value >= 50
+          ? localizedField(item, 'high')
+          : localizedField(item, 'low');
+      return direction;
+    })
+    .join(state.language === 'en' ? ', ' : '、');
+
+  return `${joined}${state.language === 'en' ? ' ' : ''}${t('strengthSuffix')}`;
 }
 
 function secretNote(artwork) {
-  const notes = [
-    `你不是需要被修复的画。${artwork.titleZh}之所以动人，也从来不是因为它毫无裂纹。`,
-    `真正的收藏不是把一幅画锁起来，而是愿意一次次用新的目光看它。也请这样看待自己。`,
-    `你今天选择的答案，只属于今天的你。以后再来，展厅也许会为你换一束光。`,
-  ];
+  const title = localizedArtworkTitle(artwork);
+  const notes =
+    state.language === 'en'
+      ? [
+          `You are not a painting that needs repair. What makes “${title}” moving was never the absence of cracks.`,
+          `True collecting is not locking a work away, but returning to it with new eyes. Please look at yourself the same way.`,
+          `The answers you chose today belong only to today's self. Come again later, and the rooms may change their light for you.`,
+        ]
+      : [
+          `你不是需要被修复的画。${title}之所以动人，也从来不是因为它毫无裂纹。`,
+          `真正的收藏不是把一幅画锁起来，而是愿意一次次用新的目光看它。也请这样看待自己。`,
+          `你今天选择的答案，只属于今天的你。以后再来，展厅也许会为你换一束光。`,
+        ];
   const index = artworks.findIndex((item) => item.id === artwork.id) % notes.length;
   return notes[index];
 }
 
 function renderCollection() {
   state.view = 'collection';
-  history.replaceState({}, '', location.pathname);
+  syncLangInUrl({ result: null });
 
   app.innerHTML = shell(`
     <section class="collection-hero">
-      <p class="eyebrow">THE PUBLIC COLLECTION</p>
-      <h1>四十八幅画，<br />四十八种面对世界的方式。</h1>
-      <p>这里只展示公开馆藏。六幅隐藏画作没有名称、没有预览，也不会通过点击进入。</p>
+      ${bilingualEyebrow(t('publicCollectionEn'), t('publicCollectionZh'))}
+      <h1>${t('collectionTitle')}</h1>
+      <p>${t('collectionIntro')}</p>
     </section>
 
     <section class="collection-grid">
-      ${visibleArtworks.map((artwork, index) => `
+      ${visibleArtworks
+        .map(
+          (artwork, index) => `
         <article class="collection-card">
-          <div class="collection-index">${String(index + 1).padStart(2, '0')}</div>
-          ${artworkImageMarkup(artwork, { width: 850 })}
+          <header class="collection-card-header">
+            <span class="collection-index">${String(index + 1).padStart(3, '0')}</span>
+            <span class="collection-status">${bilingualInline(t('onView'), t('onViewZh'))}</span>
+          </header>
+          ${artworkImageMarkup(artwork, { className: 'collection-art', width: 1100 })}
           <div class="collection-copy">
-            <span>${artwork.movement}</span>
-            <h2>${artwork.titleZh}</h2>
-            <p>${artwork.titleEn}</p>
-            <small>${artwork.keywords.join(' · ')}</small>
+            <p class="collection-movement">
+              ${localizedField(artwork, 'movement')}
+              <span aria-hidden="true">·</span>
+              ${artwork.year}
+            </p>
+            <h2>${localizedArtworkTitle(artwork)}</h2>
+            ${
+              state.language === 'zh'
+                ? `<p class="collection-title-en">${artwork.titleEn}</p>`
+                : ''
+            }
+            <dl class="collection-provenance">
+              <div>
+                <dt>${t('artistLabel')}</dt>
+                <dd>${localizedField(artwork, 'artist')}</dd>
+              </div>
+              <div>
+                <dt>${t('museumLabel')}</dt>
+                <dd>
+                  ${localizedField(artwork, 'museum')}
+                  ·
+                  ${localizedField(artwork, 'city')}
+                </dd>
+              </div>
+            </dl>
+            <div class="collection-keywords">
+              ${localizedArtworkKeywords(artwork)
+                .map((keyword) => `<span>${keyword}</span>`)
+                .join('')}
+            </div>
           </div>
         </article>
-      `).join('')}
+      `
+        )
+        .join('')}
     </section>
 
     <section class="hidden-corridor">
       <div>
-        <p class="eyebrow">THE CLOSED CORRIDOR</p>
-        <h2>还有六扇门没有写名字。</h2>
-        <p>它们不是“更稀有的奖励”，而是六种非常极端、彼此矛盾或少见的人格结构。只有答案真正靠近时，门才会打开。</p>
+        ${bilingualEyebrow(t('closedCorridorEn'), t('closedCorridorZh'))}
+        <h2>${t('closedTitle')}</h2>
+        <p>${t('closedBody')}</p>
       </div>
       <div class="hidden-doors">
-        ${hiddenArtworks.map((_, index) => `<div><span>H-${String(index + 1).padStart(2, '0')}</span><i></i></div>`).join('')}
+        ${hiddenArtworks
+          .map(
+            (_, index) =>
+              `<div><span>H-${String(index + 1).padStart(2, '0')}</span><i></i></div>`
+          )
+          .join('')}
       </div>
     </section>
 
     <section class="closing-cta">
-      <p class="eyebrow">READY TO ENTER?</p>
-      <h2>不要先挑喜欢的画。让画来挑你。</h2>
-      <button class="button button--primary button--large" data-action="start">领取入馆券 <i>→</i></button>
+      ${bilingualEyebrow(t('readyEnterEn'), t('readyEnterZh'))}
+      <h2>${t('readyTitle')}</h2>
+      <button class="button button--primary button--large" data-action="start">${t('startCta')} <i>→</i></button>
     </section>
   `);
 
@@ -474,23 +769,26 @@ function renderCollection() {
 
 function renderAbout() {
   state.view = 'about';
-  history.replaceState({}, '', location.pathname);
+  syncLangInUrl({ result: null });
 
   app.innerHTML = shell(`
     <section class="about-page">
-      <p class="eyebrow">BEFORE YOU ENTER</p>
-      <h1>观展须知</h1>
+      ${bilingualEyebrow(t('beforeEnterEn'), t('beforeEnterZh'))}
+      <h1>${t('aboutTitle')}</h1>
       <div class="about-grid">
-        <article><span>01</span><h2>不要回答“更好”的选项</h2><p>测试没有正确答案。请选择现实中的反应，而不是你认为成熟、善良或聪明的人应该怎样回答。</p></article>
-        <article><span>02</span><h2>犹豫时，选第一眼</h2><p>如果两个答案都像你，通常第一眼停留的那个更接近你的自动反应。</p></article>
-        <article><span>03</span><h2>结果不是诊断</h2><p>Soul Gallery 是一场人格叙事与审美体验，不是心理量表，也不能替代专业评估。</p></article>
-        <article><span>04</span><h2>今天的你可以改变</h2><p>人格并非一幅永远定稿的画。生活阶段、关系和环境都会改变你此刻更接近哪间展厅。</p></article>
+        <article><span>01</span><h2>${t('about1Title')}</h2><p>${t('about1Body')}</p></article>
+        <article><span>02</span><h2>${t('about2Title')}</h2><p>${t('about2Body')}</p></article>
+        <article><span>03</span><h2>${t('about3Title')}</h2><p>${t('about3Body')}</p></article>
+        <article><span>04</span><h2>${t('about4Title')}</h2><p>${t('about4Body')}</p></article>
       </div>
       <div class="about-method">
-        <div><p class="eyebrow">HOW IT WORKS</p><h2>我们比较的不是喜好，而是结构。</h2></div>
-        <p>32 道问题分别落在八条光谱：向内感、秩序感、情绪浓度、理想倾向、连接方式、新鲜偏好、行动力度与内在明度。每幅画拥有自己的光谱轮廓，结果来自整体距离，而不是某一道题的标签。</p>
+        <div>
+          ${bilingualEyebrow(t('howWorksEn'), t('howWorksZh'))}
+          <h2>${t('howWorksTitle')}</h2>
+        </div>
+        <p>${t('howWorksBody')}</p>
       </div>
-      <button class="button button--primary button--large" data-action="start">我明白了，开始观展 <i>→</i></button>
+      <button class="button button--primary button--large" data-action="start">${t('aboutStart')} <i>→</i></button>
     </section>
   `);
 
@@ -499,21 +797,25 @@ function renderAbout() {
 
 function renderCuratorEasterEgg() {
   const existing = document.querySelector('[data-curator-modal]');
-  if (existing) return;
+  if (existing) {
+    return;
+  }
 
   const dialog = document.createElement('dialog');
   dialog.className = 'secret-dialog curator-dialog';
   dialog.dataset.curatorModal = 'true';
   dialog.innerHTML = `
-    <button data-action="close-curator" aria-label="关闭">×</button>
-    <p class="eyebrow">THE FIFTH KNOCK</p>
-    <h2>你敲了五次馆门。</h2>
-    <p>所以馆员决定承认一件事：展厅并不真的知道你是谁。它只是把你交出的细节排列成光线，再请你自己完成观看。</p>
-    <small>这是首页 Logo 的隐藏彩蛋。</small>
+    <button data-action="close-curator" aria-label="${t('close')}">×</button>
+    <p class="eyebrow">${t('fifthKnock')}</p>
+    <h2>${t('curatorEggTitle')}</h2>
+    <p>${t('curatorEggBody')}</p>
+    <small>${t('curatorEggHint')}</small>
   `;
   document.body.appendChild(dialog);
   dialog.addEventListener('click', (event) => {
-    if (event.target.dataset.action === 'close-curator') dialog.close();
+    if (event.target.dataset.action === 'close-curator') {
+      dialog.close();
+    }
   });
   dialog.addEventListener('close', () => dialog.remove());
   dialog.showModal();
@@ -550,6 +852,8 @@ function handleAction(event) {
       state.questionIndex = 0;
       state.answers = {};
       state.result = null;
+      state.responseTimes = {};
+      state.questionClock = null;
       renderQuiz();
       break;
     case 'answer':
@@ -557,12 +861,16 @@ function handleAction(event) {
       break;
     case 'previous':
       if (state.questionIndex > 0) {
+        finishQuestionClock(questions[state.questionIndex].id);
         state.questionIndex -= 1;
         renderQuiz();
       }
       break;
     case 'exit-quiz':
-      if (confirm('暂时离开后，本次未完成的答案不会保存。确定离馆吗？')) renderHome();
+      if (confirm(t('exitConfirm'))) {
+        state.questionClock = null;
+        renderHome();
+      }
       break;
     case 'collection':
       renderCollection();
@@ -574,16 +882,21 @@ function handleAction(event) {
       state.questionIndex = 0;
       state.answers = {};
       state.result = null;
+      state.responseTimes = {};
+      state.questionClock = null;
       renderQuiz();
       break;
     case 'share':
       shareResult();
       break;
     case 'open-source':
-      openImageSource(event.currentTarget);
+      openImageSource();
       break;
     case 'close-secret':
       event.currentTarget.closest('dialog')?.close();
+      break;
+    case 'toggle-language':
+      setLanguage(state.language === 'zh' ? 'en' : 'zh');
       break;
     default:
       break;
@@ -592,10 +905,13 @@ function handleAction(event) {
 
 async function shareResult() {
   const artwork = state.result?.primary?.artwork;
-  if (!artwork) return;
+  if (!artwork) {
+    return;
+  }
+
   const shareData = {
-    title: `我的灵魂画像是《${artwork.titleZh}》`,
-    text: `${artwork.tagline} —— 我在 Soul Gallery 找到了自己的灵魂画像。`,
+    title: t('shareTitle', localizedArtworkTitle(artwork)),
+    text: t('shareText', localizedField(artwork, 'tagline')),
     url: location.href,
   };
 
@@ -604,20 +920,24 @@ async function shareResult() {
       await navigator.share(shareData);
       return;
     }
-    await navigator.clipboard.writeText(`${shareData.title}\n${shareData.text}\n${shareData.url}`);
-    showToast('结果文案和链接已复制');
+    await navigator.clipboard.writeText(
+      `${shareData.title}\n${shareData.text}\n${shareData.url}`
+    );
+    showToast(t('copied'));
   } catch (error) {
-    if (error?.name !== 'AbortError') showToast('暂时无法分享，请复制浏览器地址');
+    if (error?.name !== 'AbortError') {
+      showToast(t('shareFail'));
+    }
   }
 }
 
-function openImageSource(button) {
+function openImageSource() {
   const imageNode = document.querySelector('.result-art[data-art-image]');
   const source = imageNode?.dataset.source;
   if (source) {
     window.open(source, '_blank', 'noopener,noreferrer');
   } else {
-    showToast('图像来源仍在加载，请稍后再试');
+    showToast(t('sourceLoading'));
   }
 }
 
@@ -643,8 +963,17 @@ function resultFromSharedArtwork(artwork) {
   const companions = visibleArtworks
     .filter((item) => item.id !== artwork.id)
     .map((item) => {
-      const distance = Math.sqrt(item.profile.reduce((sum, value, index) => sum + (value - artwork.profile[index]) ** 2, 0) / item.profile.length);
-      return { artwork: item, distance, match: Math.round(94 - distance * 0.18) };
+      const distance = Math.sqrt(
+        item.profile.reduce(
+          (sum, value, index) => sum + (value - artwork.profile[index]) ** 2,
+          0
+        ) / item.profile.length
+      );
+      return {
+        artwork: item,
+        distance,
+        match: Math.round(94 - distance * 0.18),
+      };
     })
     .sort((a, b) => a.distance - b.distance)
     .slice(0, 3);
@@ -658,6 +987,7 @@ function resultFromSharedArtwork(artwork) {
 }
 
 function boot() {
+  document.title = t('pageTitle');
   const params = new URLSearchParams(location.search);
   const resultId = params.get('result');
   const sharedArtwork = resultId ? artworkById[resultId] : null;
