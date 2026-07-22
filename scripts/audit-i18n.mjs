@@ -73,8 +73,43 @@ const requiredArtworkZh = [
   'growth',
 ];
 
-if (artworks.length !== 120) {
-  failures.push(`Expected 120 artworks, found ${artworks.length}`);
+if (artworks.length !== 114) {
+  failures.push(`Expected 114 artworks, found ${artworks.length}`);
+}
+
+const requiredUiKeys = [
+  'ticketTitle',
+  'ticketIntro',
+  'ticketNameLabel',
+  'enterNow',
+  'nameRequired',
+  'sharedStartCta',
+  'sharedResultLead',
+  'anonymousFriend',
+  'backHome',
+  'admissionNoticeTitle',
+  'step4Title',
+  'closedCorridorEn',
+  'fifthKnockZh',
+];
+
+for (const key of requiredUiKeys) {
+  if (!(key in UI.zh) || !(key in UI.en)) {
+    failures.push(`Missing UI key: ${key}`);
+  }
+}
+
+const intentionalEmptyZh = new Set([
+  'spectrumZh',
+  'neighboursZh',
+  'museumZh',
+  'readyEnterZh',
+]);
+
+for (const [key, value] of Object.entries(UI.zh)) {
+  if (typeof value === 'string' && value.trim() === '' && !intentionalEmptyZh.has(key)) {
+    failures.push(`Unexpected empty UI.zh.${key}`);
+  }
 }
 
 for (const artwork of artworks) {

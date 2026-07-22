@@ -11,12 +11,68 @@ import {
   profileForArtwork,
   strongestDimensions,
   spectrumDimensions,
+  rankArtworksForProfile,
+  assignDisplayMatches,
+  clamp,
 } from './lib/scoring.js';
 import { hydrateArtworkImages } from './lib/commons.js';
 
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 const LANGUAGE_STORAGE_KEY = 'soul-gallery:language';
+const VISITOR_NAME_KEY = 'soul-gallery:visitor-name';
+
+const hiddenFrameColors = [
+  '#45645a',
+  '#77574f',
+  '#53647b',
+  '#887343',
+  '#675d78',
+  '#6d7650',
+];
+
+function sanitizeVisitorName(value) {
+  return String(value || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 30);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function readVisitorName() {
+  try {
+    return sanitizeVisitorName(localStorage.getItem(VISITOR_NAME_KEY));
+  } catch {
+    return '';
+  }
+}
+
+function saveVisitorName(name) {
+  try {
+    localStorage.setItem(VISITOR_NAME_KEY, sanitizeVisitorName(name));
+  } catch {
+    // Local storage is optional.
+  }
+}
+
+function createTicketNumber() {
+  const date = new Date();
+  const datePart = [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('');
+  const randomPart = Math.random().toString(36).slice(2, 7).toUpperCase();
+  return `SG-${datePart}-${randomPart}`;
+}
 
 function getInitialLanguage() {
   const params = new URLSearchParams(location.search);
@@ -48,6 +104,10 @@ const state = {
   language: getInitialLanguage(),
   responseTimes: {},
   questionClock: null,
+  visitorName: readVisitorName(),
+  ticketNumber: null,
+  resultOrigin: 'own',
+  resultOwnerName: '',
 };
 
 const featuredIds = [
@@ -100,16 +160,15 @@ function renderCurrentView() {
     return;
   }
   if (state.view === 'result' && state.result) {
-    const shared = new URLSearchParams(location.search).has('result');
-    renderResult(state.result, { shared });
+    renderResult(state.result);
     return;
   }
   if (state.view === 'collection') {
     renderCollection();
     return;
   }
-  if (state.view === 'about') {
-    renderAbout();
+  if (state.view === 'ticket') {
+    renderTicket();
     return;
   }
   if (state.view === 'loading') {
@@ -145,7 +204,9 @@ function localizedArtworkKeywords(artwork) {
   return state.language === 'en' ? artwork.keywordsEn : artwork.keywords;
 }
 
-function bilingualEyebrow(english, chinese) {
+function bilingualEyebrow(english, chinese = '') {
+  const translated = String(chinese || '').trim();
+
   if (state.language === 'en') {
     return `
       <p class="eyebrow">
@@ -157,7 +218,7 @@ function bilingualEyebrow(english, chinese) {
   return `
     <p class="eyebrow eyebrow--bilingual">
       <span>${english}</span>
-      <small>${chinese}</small>
+      ${translated ? `<small>${translated}</small>` : ''}
     </p>
   `;
 }
@@ -180,6 +241,39 @@ function syncLangInUrl(extra = {}) {
     }
   });
   history.replaceState({}, '', url);
+}
+
+function clearShareParamsFromUrl() {
+  syncLangInUrl({
+    result: null,
+    by: null,
+    m: null,
+    p: null,
+  });
+}
+
+function serializeProfile(profile) {
+  return spectrumDimensions()
+    .map((dimension) => Math.round(profile[dimension.key] ?? 50))
+    .join(',');
+}
+
+function parseSharedProfile(value) {
+  const parts = String(value || '')
+    .split(',')
+    .map(Number);
+  const dimensions = spectrumDimensions();
+
+  if (
+    parts.length !== dimensions.length ||
+    parts.some((number) => !Number.isFinite(number) || number < 0 || number > 100)
+  ) {
+    return null;
+  }
+
+  return Object.fromEntries(
+    dimensions.map((dimension, index) => [dimension.key, parts[index]])
+  );
 }
 
 function artworkImageMarkup(artwork, { className = '', width = 1200, eager = false } = {}) {
@@ -282,9 +376,28 @@ function finishQuestionClock(questionId) {
   return elapsed;
 }
 
+function scrollToAdmissionNotice() {
+  const performScroll = () => {
+    document.querySelector('#admission-notice')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
+
+  if (state.view !== 'home') {
+    renderHome();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(performScroll);
+    });
+    return;
+  }
+
+  performScroll();
+}
+
 function renderHome() {
   state.view = 'home';
-  syncLangInUrl({ result: null });
+  clearShareParamsFromUrl();
 
   const featured = featuredIds
     .map((id, index) => {
@@ -305,68 +418,214 @@ function renderHome() {
         <h1>${t('heroTitle')}</h1>
         <p class="hero-intro">${t('heroIntro')}</p>
         <div class="hero-actions">
-          <button class="button button--primary" data-action="start">
+          <button class="button button--ghost" data-action="collection">${t('collectionCta')}</button>
+          <button class="button button--primary" data-action="ticket">
             <span>${t('startCta')}</span><i aria-hidden="true">→</i>
           </button>
-          <button class="button button--ghost" data-action="collection">${t('collectionCta')}</button>
         </div>
         <dl class="hero-facts">
           <div><dt>32</dt><dd>${t('factChoices')}</dd></div>
           <div><dt>108</dt><dd>${t('factPublic')}</dd></div>
-          <div><dt>12</dt><dd>${t('factHidden')}</dd></div>
+          <div><dt>6</dt><dd>${t('factHidden')}</dd></div>
         </dl>
       </div>
       <div class="hero-gallery" aria-label="${state.language === 'en' ? 'Collection preview' : '部分馆藏预览'}">
         <div class="gallery-glow"></div>
         ${featured}
-        <div class="museum-label">
-          <span>${t('roomLabel')}</span>
-          <strong>${t('innerCollectionEn')}</strong>
-          ${state.language === 'zh' ? `<small>${t('innerCollectionZh')}</small>` : ''}
-          <small>${t('noRightAnswer')}</small>
+      </div>
+    </section>
+
+    <section class="admission-notice section-frame" id="admission-notice">
+      <div class="admission-heading">
+        <div class="section-number">01</div>
+        <div>
+          ${bilingualEyebrow(t('curatorNoteEn'), t('curatorNoteZh'))}
+          <h2>${t('admissionNoticeTitle')}</h2>
         </div>
       </div>
-    </section>
 
-    <section class="manifesto section-frame">
-      <div class="section-number">01</div>
-      <div>
-        ${bilingualEyebrow(t('curatorNoteEn'), t('curatorNoteZh'))}
-        <h2>${t('manifestoTitle')}</h2>
-      </div>
-      <div class="manifesto-copy">
+      <div class="admission-intro">
         <p>${t('manifestoP1')}</p>
-        <p>${t('manifestoP2Before')}<strong>${t('manifestoP2Strong')}</strong></p>
+        <p>
+          ${t('manifestoP2Before')}
+          <strong>${t('manifestoP2Strong')}</strong>
+        </p>
       </div>
-    </section>
 
-    <section class="experience-grid">
-      <article>
-        <span>Ⅰ</span>
-        <h3>${t('step1Title')}</h3>
-        <p>${t('step1Body')}</p>
-      </article>
-      <article>
-        <span>Ⅱ</span>
-        <h3>${t('step2Title')}</h3>
-        <p>${t('step2Body')}</p>
-      </article>
-      <article>
-        <span>Ⅲ</span>
-        <h3>${t('step3Title')}</h3>
-        <p>${t('step3Body')}</p>
-      </article>
+      <div class="admission-rules">
+        <article>
+          <span>Ⅰ</span>
+          <div>
+            <h3>${t('step1Title')}</h3>
+            <p>${t('step1Body')}</p>
+          </div>
+        </article>
+        <article>
+          <span>Ⅱ</span>
+          <div>
+            <h3>${t('step2Title')}</h3>
+            <p>${t('step2Body')}</p>
+          </div>
+        </article>
+        <article>
+          <span>Ⅲ</span>
+          <div>
+            <h3>${t('step3Title')}</h3>
+            <p>${t('step3Body')}</p>
+          </div>
+        </article>
+        <article>
+          <span>Ⅳ</span>
+          <div>
+            <h3>${t('step4Title')}</h3>
+            <p>${t('step4Body')}</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="admission-method">
+        <div>
+          ${bilingualEyebrow(t('howWorksEn'), t('howWorksZh'))}
+          <h3>${t('howWorksTitle')}</h3>
+        </div>
+        <p>${t('howWorksBody')}</p>
+      </div>
+
+      <div class="admission-cta">
+        <button class="button button--primary button--large" data-action="ticket">
+          ${t('aboutStart')} <i aria-hidden="true">→</i>
+        </button>
+      </div>
     </section>
 
     <section class="closing-cta">
       ${bilingualEyebrow(t('admissionEn'), t('admissionZh'))}
       <h2>${t('closingTitle')}</h2>
-      <button class="button button--primary button--large" data-action="start">${t('enterNow')} <i>→</i></button>
+      <button class="button button--primary button--large" data-action="ticket">${t('startCta')} <i>→</i></button>
     </section>
   `);
 
   bindGlobalActions();
   hydrateArtworkImages(app);
+}
+
+function renderTicket() {
+  state.view = 'ticket';
+  clearShareParamsFromUrl();
+
+  if (!state.ticketNumber) {
+    state.ticketNumber = createTicketNumber();
+  }
+
+  const safeName = escapeHtml(state.visitorName);
+  const displayName = safeName || t('ticketUnnamed');
+
+  app.innerHTML = shell(`
+    <section class="ticket-page">
+      <div class="ticket-intro">
+        ${bilingualEyebrow(t('ticketEyebrowEn'), t('ticketEyebrowZh'))}
+        <h1>${t('ticketTitle')}</h1>
+        <p>${t('ticketIntro')}</p>
+      </div>
+
+      <div class="ticket-layout">
+        <article class="admission-ticket">
+          <div class="ticket-edge ticket-edge--left"></div>
+          <div class="ticket-edge ticket-edge--right"></div>
+
+          <header class="ticket-brand">
+            <div>
+              <strong>Soul Gallery</strong>
+              <span>PERSONALITY EXHIBITION · 2026</span>
+            </div>
+            <span class="ticket-admit">
+              ${t('ticketAdmitOne')}
+            </span>
+          </header>
+
+          <div class="ticket-center">
+            <p>${t('ticketHolderLabel')}</p>
+            <h2 data-ticket-name>${displayName}</h2>
+          </div>
+
+          <footer class="ticket-footer">
+            <div>
+              <span>${t('ticketNumberLabel')}</span>
+              <strong>${state.ticketNumber}</strong>
+            </div>
+
+            <div class="ticket-stat">
+              <strong>32</strong>
+              <span>${t('ticketQuestions')}</span>
+            </div>
+
+            <div class="ticket-stat">
+              <strong>108</strong>
+              <span>${t('ticketPublic')}</span>
+            </div>
+
+            <div class="ticket-stat">
+              <strong>6</strong>
+              <span>${t('ticketHidden')}</span>
+            </div>
+          </footer>
+        </article>
+
+        <div class="ticket-form">
+          <label for="visitor-name">
+            ${t('ticketNameLabel')}
+          </label>
+
+          <input
+            id="visitor-name"
+            data-visitor-name
+            type="text"
+            maxlength="30"
+            autocomplete="name"
+            value="${safeName}"
+            placeholder="${t('ticketNamePlaceholder')}"
+          />
+
+          <p>${t('ticketNameHint')}</p>
+
+          <button
+            class="button button--primary button--large"
+            data-action="enter-quiz"
+            ${safeName ? '' : 'disabled'}
+          >
+            ${t('enterNow')}
+            <i aria-hidden="true">→</i>
+          </button>
+        </div>
+      </div>
+    </section>
+  `);
+
+  bindGlobalActions();
+
+  const input = app.querySelector('[data-visitor-name]');
+  const ticketName = app.querySelector('[data-ticket-name]');
+  const enterButton = app.querySelector('[data-action="enter-quiz"]');
+
+  input?.addEventListener('input', () => {
+    state.visitorName = sanitizeVisitorName(input.value);
+
+    if (ticketName) {
+      ticketName.textContent = state.visitorName || t('ticketUnnamed');
+    }
+
+    if (enterButton) {
+      enterButton.disabled = !state.visitorName;
+    }
+  });
+
+  input?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && state.visitorName && enterButton) {
+      enterButton.click();
+    }
+  });
+
+  requestAnimationFrame(() => input?.focus());
 }
 
 function renderQuiz() {
@@ -381,15 +640,13 @@ function renderQuiz() {
     <section class="quiz-page">
       <div class="quiz-progress" aria-label="${t('quizProgressAria')}">
         <div class="progress-meta">
-          <span>ROOM ${String(Math.ceil(current / 8)).padStart(2, '0')}</span>
+          <span>ROOM ${String(current).padStart(2, '0')}</span>
           <span>${String(current).padStart(2, '0')} / ${questions.length}</span>
         </div>
         <div class="progress-track"><i style="width:${progress}%"></i></div>
       </div>
 
       <div class="question-card" data-question-card>
-        <div class="question-index">${String(current).padStart(2, '0')}</div>
-        ${bilingualEyebrow(t('smallDecisionEn'), t('smallDecisionZh'))}
         <h1>${localizedQuestionPrompt(question)}</h1>
         <p class="question-note">${localizedQuestionNote(question)}</p>
         <div class="options" role="radiogroup" aria-label="${t('optionsAria')}">
@@ -453,6 +710,8 @@ function answerQuestion(value) {
 
 function beginCuration() {
   state.result = getResult(state.answers, questions, state.responseTimes);
+  state.resultOrigin = 'own';
+  state.resultOwnerName = state.visitorName;
   state.view = 'loading';
 
   const phrases = [t('phrase1'), t('phrase2'), t('phrase3'), t('phrase4')];
@@ -511,26 +770,53 @@ function profileBars(profile) {
     .join('');
 }
 
-function renderResult(result, { shared = false } = {}) {
+function resultPortraitKicker(artwork) {
+  const isShared = state.resultOrigin === 'shared';
+  const ownerName = state.resultOwnerName || t('anonymousFriend');
+
+  if (artwork.hidden) {
+    const en = t('hiddenUnlockedEn');
+    const zh = t('hiddenUnlockedZh');
+    if (state.language === 'zh' && zh) {
+      return `${en} · ${zh}`;
+    }
+    return en;
+  }
+
+  if (isShared) {
+    return state.language === 'en'
+      ? t('sharedPortraitTitleEn', ownerName)
+      : t('sharedPortraitTitle', ownerName);
+  }
+
+  return state.language === 'en'
+    ? t('soulPortraitOfEn', ownerName || state.visitorName || t('anonymousFriend'))
+    : t('soulPortraitOf', ownerName || state.visitorName || t('anonymousFriend'));
+}
+
+function renderResult(result) {
   state.view = 'result';
   state.result = result;
   state.frameClicks = 0;
 
+  const isShared = state.resultOrigin === 'shared';
   const { artwork, match } = result.primary;
   const profile = result.profile;
   const strongest = strongestDimensions(profile, 3);
   const number = resultNumber(artwork, match);
+  const ownerName = state.resultOwnerName || t('anonymousFriend');
+  const safeOwnerName = escapeHtml(ownerName);
+  const portraitKicker = escapeHtml(resultPortraitKicker(artwork));
 
-  syncLangInUrl({ result: artwork.id });
-  saveResult(artwork.id);
-
-  const kickerEn = artwork.hidden ? t('hiddenUnlockedEn') : t('soulPortraitEn');
-  const kickerZh = artwork.hidden ? t('hiddenUnlockedZh') : t('soulPortraitZh');
+  if (!isShared) {
+    clearShareParamsFromUrl();
+    saveResult(artwork.id);
+  }
 
   app.innerHTML = shell(`
     <section class="result-hero">
       <div class="result-kicker">
-        <span>${state.language === 'zh' ? `${kickerEn} · ${kickerZh}` : kickerEn}</span>
+        <span data-result-kicker>${portraitKicker}</span>
         <span>${t('collectionNumber')} ${number}</span>
       </div>
       <div class="result-layout">
@@ -554,8 +840,14 @@ function renderResult(result, { shared = false } = {}) {
             .map((keyword) => `<span>${keyword}</span>`)
             .join('')}</div>
           <div class="result-actions">
-            <button class="button button--primary" data-action="share">${t('share')} <i>↗</i></button>
-            <button class="button button--ghost" data-action="restart">${t('restart')}</button>
+            ${
+              isShared
+                ? ''
+                : `
+              <button class="button button--primary" data-action="share">${t('share')} <i>↗</i></button>
+              <button class="button button--ghost" data-action="restart">${t('restart')}</button>
+            `
+            }
           </div>
         </div>
       </div>
@@ -630,8 +922,23 @@ function renderResult(result, { shared = false } = {}) {
     </section>
 
     <section class="result-final">
-      <p>${shared ? t('sharedResult') : t('ownResult')}</p>
-      <button class="text-button text-button--large" data-action="restart">${t('walkAgain')}</button>
+      ${
+        isShared
+          ? `
+        <p>${t(
+          'sharedResultLead',
+          safeOwnerName,
+          state.language === 'en' ? artwork.titleEn : artwork.titleZh
+        )}</p>
+        <button class="button button--primary button--large" data-action="ticket">
+          ${t('sharedStartCta')}
+        </button>
+      `
+          : `
+        <p>${t('ownResult')}</p>
+        <button class="text-button text-button--large" data-action="restart">${t('walkAgain')}</button>
+      `
+      }
     </section>
 
     <dialog class="secret-dialog" data-secret-dialog>
@@ -669,11 +976,25 @@ function secretNote(artwork) {
           `You are not a painting that needs repair. What makes “${title}” moving was never the absence of cracks.`,
           `True collecting is not locking a work away, but returning to it with new eyes. Please look at yourself the same way.`,
           `The answers you chose today belong only to today's self. Come again later, and the rooms may change their light for you.`,
+          `You do not need to become complete all at once. Paint also dries layer by layer before arriving at its present colour.`,
+          `Not every light comes from far away. Sometimes it appears because you have finally stopped hiding yourself from it.`,
+          `Do not doubt the direction simply because part of the road is slow. A rhythm that belongs to you owes no one an explanation.`,
+          `Let today contain only one small brushstroke. Many expansive images begin with an almost unnoticeable mark.`,
+          `You have already travelled farther than many moments you once feared. Sometimes looking back is how you notice that.`,
+          `A part of you that is not immediately understood has not lost its value. A good work also asks the viewer to remain.`,
+          `When a choice arrives, may you hear the world without missing your own voice.`,
         ]
       : [
           `你不是需要被修复的画。${title}之所以动人，也从来不是因为它毫无裂纹。`,
           `真正的收藏不是把一幅画锁起来，而是愿意一次次用新的目光看它。也请这样看待自己。`,
           `你今天选择的答案，只属于今天的你。以后再来，展厅也许会为你换一束光。`,
+          `你不需要一次成为完整的人。画也是一层层干透，才有了今天的颜色。`,
+          `不是每一道光都来自远方。有时只是你终于没有继续遮住自己。`,
+          `别因为一段路走得慢，就怀疑方向。真正属于你的节奏，不需要向谁交代。`,
+          `允许今天只完成一小笔。许多辽阔的画面，都从不起眼的落笔开始。`,
+          `你已经比许多曾经害怕的时刻走得更远。偶尔回头，是为了看见这一点。`,
+          `没有被立刻理解的部分，不等于没有价值。好作品也需要观者停留。`,
+          `愿你在需要选择时，既听见世界的声音，也没有错过自己的。`,
         ];
   const index = artworks.findIndex((item) => item.id === artwork.id) % notes.length;
   return notes[index];
@@ -681,10 +1002,11 @@ function secretNote(artwork) {
 
 function renderCollection() {
   state.view = 'collection';
-  syncLangInUrl({ result: null });
+  clearShareParamsFromUrl();
 
   app.innerHTML = shell(`
     <section class="collection-hero">
+      <button class="back-link" data-action="back-home">${t('backHome')}</button>
       ${bilingualEyebrow(t('publicCollectionEn'), t('publicCollectionZh'))}
       <h1>${t('collectionTitle')}</h1>
       <p>${t('collectionIntro')}</p>
@@ -747,8 +1069,15 @@ function renderCollection() {
       <div class="hidden-doors">
         ${hiddenArtworks
           .map(
-            (_, index) =>
-              `<div><span>H-${String(index + 1).padStart(2, '0')}</span><i></i></div>`
+            (_, index) => `
+          <div
+            class="hidden-mini-frame"
+            style="--hidden-frame-color: ${hiddenFrameColors[index]}; background: ${hiddenFrameColors[index]}; border-color: ${hiddenFrameColors[index]};"
+            aria-label="${t('hiddenPaintingAria', index + 1)}"
+          >
+            <span aria-hidden="true">?</span>
+          </div>
+        `
           )
           .join('')}
       </div>
@@ -757,40 +1086,12 @@ function renderCollection() {
     <section class="closing-cta">
       ${bilingualEyebrow(t('readyEnterEn'), t('readyEnterZh'))}
       <h2>${t('readyTitle')}</h2>
-      <button class="button button--primary button--large" data-action="start">${t('startCta')} <i>→</i></button>
+      <button class="button button--primary button--large" data-action="ticket">${t('startCta')} <i>→</i></button>
     </section>
   `);
 
   bindGlobalActions();
   hydrateArtworkImages(app);
-}
-
-function renderAbout() {
-  state.view = 'about';
-  syncLangInUrl({ result: null });
-
-  app.innerHTML = shell(`
-    <section class="about-page">
-      ${bilingualEyebrow(t('beforeEnterEn'), t('beforeEnterZh'))}
-      <h1>${t('aboutTitle')}</h1>
-      <div class="about-grid">
-        <article><span>01</span><h2>${t('about1Title')}</h2><p>${t('about1Body')}</p></article>
-        <article><span>02</span><h2>${t('about2Title')}</h2><p>${t('about2Body')}</p></article>
-        <article><span>03</span><h2>${t('about3Title')}</h2><p>${t('about3Body')}</p></article>
-        <article><span>04</span><h2>${t('about4Title')}</h2><p>${t('about4Body')}</p></article>
-      </div>
-      <div class="about-method">
-        <div>
-          ${bilingualEyebrow(t('howWorksEn'), t('howWorksZh'))}
-          <h2>${t('howWorksTitle')}</h2>
-        </div>
-        <p>${t('howWorksBody')}</p>
-      </div>
-      <button class="button button--primary button--large" data-action="start">${t('aboutStart')} <i>→</i></button>
-    </section>
-  `);
-
-  bindGlobalActions();
 }
 
 function renderCuratorEasterEgg() {
@@ -804,10 +1105,9 @@ function renderCuratorEasterEgg() {
   dialog.dataset.curatorModal = 'true';
   dialog.innerHTML = `
     <button data-action="close-curator" aria-label="${t('close')}">×</button>
-    <p class="eyebrow">${t('fifthKnock')}</p>
+    ${bilingualEyebrow(t('fifthKnock'), t('fifthKnockZh'))}
     <h2>${t('curatorEggTitle')}</h2>
     <p>${t('curatorEggBody')}</p>
-    <small>${t('curatorEggHint')}</small>
   `;
   document.body.appendChild(dialog);
   dialog.addEventListener('click', (event) => {
@@ -842,16 +1142,29 @@ function handleAction(event) {
       if (state.logoClicks >= 5) {
         state.logoClicks = 0;
         renderCuratorEasterEgg();
-      } else {
+        break;
+      }
+      if (state.view !== 'home') {
         renderHome();
       }
       break;
-    case 'start':
+    case 'ticket':
+      renderTicket();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    case 'enter-quiz':
+      if (!state.visitorName) {
+        showToast(t('nameRequired'));
+        break;
+      }
+      saveVisitorName(state.visitorName);
       state.questionIndex = 0;
       state.answers = {};
       state.result = null;
       state.responseTimes = {};
       state.questionClock = null;
+      state.resultOrigin = 'own';
+      state.resultOwnerName = state.visitorName;
       renderQuiz();
       break;
     case 'answer':
@@ -872,17 +1185,18 @@ function handleAction(event) {
       break;
     case 'collection':
       renderCollection();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     case 'about':
-      renderAbout();
+      scrollToAdmissionNotice();
+      break;
+    case 'back-home':
+      renderHome();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     case 'restart':
-      state.questionIndex = 0;
-      state.answers = {};
-      state.result = null;
-      state.responseTimes = {};
-      state.questionClock = null;
-      renderQuiz();
+      renderTicket();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     case 'share':
       shareResult();
@@ -903,14 +1217,25 @@ function handleAction(event) {
 
 async function shareResult() {
   const artwork = state.result?.primary?.artwork;
-  if (!artwork) {
+  if (!artwork || !state.result) {
     return;
   }
 
+  const shareUrl = new URL(location.origin + location.pathname);
+  shareUrl.searchParams.set('result', artwork.id);
+  shareUrl.searchParams.set('by', state.visitorName || t('anonymousFriend'));
+  shareUrl.searchParams.set('m', String(state.result.primary.match));
+  shareUrl.searchParams.set('p', serializeProfile(state.result.profile));
+  shareUrl.searchParams.set('lang', state.language);
+
   const shareData = {
-    title: t('shareTitle', localizedArtworkTitle(artwork)),
+    title: t(
+      'shareTitle',
+      state.visitorName || t('anonymousFriend'),
+      localizedArtworkTitle(artwork)
+    ),
     text: t('shareText', localizedField(artwork, 'tagline')),
-    url: location.href,
+    url: shareUrl.toString(),
   };
 
   try {
@@ -956,31 +1281,47 @@ function saveResult(id) {
   }
 }
 
-function resultFromSharedArtwork(artwork) {
-  const profile = profileForArtwork(artwork);
-  const companions = visibleArtworks
-    .filter((item) => item.id !== artwork.id)
-    .map((item) => {
-      const distance = Math.sqrt(
-        item.profile.reduce(
-          (sum, value, index) => sum + (value - artwork.profile[index]) ** 2,
-          0
-        ) / item.profile.length
-      );
-      return {
-        artwork: item,
-        distance,
-        match: Math.round(94 - distance * 0.18),
-      };
-    })
-    .sort((a, b) => a.distance - b.distance)
-    .slice(0, 3);
+function resultFromSharedArtwork(artwork, profile, primaryMatch) {
+  const ranked = rankArtworksForProfile(profile);
+  const primaryEntry =
+    ranked.find((item) => item.artwork.id === artwork.id) || {
+      artwork,
+      distance: 0,
+      match: primaryMatch,
+    };
+
+  const others = ranked.filter((item) => item.artwork.id !== artwork.id);
+  const reordered = [
+    { artwork, distance: primaryEntry.distance },
+    ...others.map(({ artwork: item, distance }) => ({ artwork: item, distance })),
+  ];
+  const withMatches = assignDisplayMatches(reordered);
+
+  let previousMatch = primaryMatch;
+  const companions = withMatches.slice(1, 4).map((item, index) => {
+    const match = clamp(
+      Math.min(item.match, previousMatch - 1, primaryMatch - (index + 1)),
+      60,
+      primaryMatch - 1
+    );
+    previousMatch = match;
+    return {
+      ...item,
+      match,
+    };
+  });
 
   return {
     profile,
-    primary: { artwork, match: 92, distance: 0 },
+    primary: {
+      artwork,
+      distance: primaryEntry.distance,
+      match: primaryMatch,
+    },
     companions,
-    unlockedHidden: artwork.hidden ? [{ artwork, match: 92, distance: 0 }] : [],
+    unlockedHidden: artwork.hidden
+      ? [{ artwork, match: primaryMatch, distance: primaryEntry.distance }]
+      : [],
   };
 }
 
@@ -991,8 +1332,17 @@ function boot() {
   const sharedArtwork = resultId ? artworkById[resultId] : null;
 
   if (sharedArtwork) {
-    renderResult(resultFromSharedArtwork(sharedArtwork), { shared: true });
+    const ownerName = sanitizeVisitorName(params.get('by'));
+    const sharedMatch = clamp(Number(params.get('m')) || 92, 60, 99);
+    const sharedProfile =
+      parseSharedProfile(params.get('p')) || profileForArtwork(sharedArtwork);
+
+    state.resultOrigin = 'shared';
+    state.resultOwnerName = ownerName || t('anonymousFriend');
+    state.result = resultFromSharedArtwork(sharedArtwork, sharedProfile, sharedMatch);
+    renderResult(state.result);
   } else {
+    state.resultOrigin = 'own';
     renderHome();
   }
 }

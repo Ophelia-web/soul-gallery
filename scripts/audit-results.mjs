@@ -51,7 +51,8 @@ function distanceMatrixPairs(limit = 20) {
 console.log('Soul Gallery result reachability audit');
 
 assert(visibleArtworks.length === 108, `visible count ${visibleArtworks.length}`);
-assert(hiddenArtworks.length === 12, `hidden count ${hiddenArtworks.length}`);
+assert(hiddenArtworks.length === 6, `hidden count ${hiddenArtworks.length}`);
+assert(artworks.length === 114, `total count ${artworks.length}`);
 
 const profileKeys = new Set();
 for (const artwork of artworks) {
@@ -72,13 +73,43 @@ for (const pair of distanceMatrixPairs(20)) {
 
 const wins = Object.fromEntries(visibleArtworks.map((item) => [item.id, 0]));
 
+let equalCompanionMatches = 0;
+let nonDecreasingCompanions = 0;
+
 for (let i = 0; i < SIMULATIONS; i += 1) {
   const result = getResult(randomAnswers(), questions, randomTimes());
   const id = result.primary?.artwork?.id;
   if (id && Object.prototype.hasOwnProperty.call(wins, id)) {
     wins[id] += 1;
   }
+
+  const companions = result.companions || [];
+  if (companions.length !== 3) {
+    nonDecreasingCompanions += 1;
+    continue;
+  }
+
+  const decreasing =
+    result.primary.match > companions[0].match &&
+    companions[0].match > companions[1].match &&
+    companions[1].match > companions[2].match;
+
+  if (!decreasing) {
+    nonDecreasingCompanions += 1;
+  }
+
+  if (
+    companions[0].match === companions[1].match ||
+    companions[1].match === companions[2].match ||
+    result.primary.match === companions[0].match
+  ) {
+    equalCompanionMatches += 1;
+  }
 }
+
+assert(equalCompanionMatches === 0, `equal companion matches found: ${equalCompanionMatches}`);
+assert(nonDecreasingCompanions === 0, `non-decreasing companion matches: ${nonDecreasingCompanions}`);
+console.log('Companion display matches strictly decreasing across simulations');
 
 const unreachable = Object.entries(wins)
   .filter(([, count]) => count === 0)

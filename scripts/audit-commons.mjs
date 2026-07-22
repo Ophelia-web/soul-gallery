@@ -190,12 +190,56 @@ function toMarkdown(results, structuralFailures) {
 const results = [];
 const structuralFailures = [];
 
-if (artworks.length !== 120) structuralFailures.push(`Expected 120 artworks, found ${artworks.length}`);
+if (artworks.length !== 114) structuralFailures.push(`Expected 114 artworks, found ${artworks.length}`);
 if (visibleArtworks.length !== 108) {
   structuralFailures.push(`Expected 108 visible artworks, found ${visibleArtworks.length}`);
 }
-if (hiddenArtworks.length !== 12) {
-  structuralFailures.push(`Expected 12 hidden artworks, found ${hiddenArtworks.length}`);
+if (hiddenArtworks.length !== 6) {
+  structuralFailures.push(`Expected 6 hidden artworks, found ${hiddenArtworks.length}`);
+}
+
+const requiredHidden = [
+  'the-dream-rousseau',
+  'soul-rose',
+  'bookworm-spitzweg',
+  'goldfish-matisse',
+  'astronomer-vermeer',
+  'kiss-hayez',
+];
+const requiredVisible = [
+  'sleeping-gypsy',
+  'in-the-conservatory',
+  'girl-watering-can',
+  'boulevard-montmartre-night',
+  'dancers-blue',
+];
+const forbiddenIds = [
+  'bathers-asnieres',
+  'coign-vantage',
+  'dance-class-degas',
+  'ballet-class-degas',
+  'monk-sea',
+  'concert-vermeer',
+  'young-hare',
+  'blue-window-matisse',
+  'chalk-cliffs-rugen',
+  'young-girl-reading',
+];
+
+for (const id of requiredHidden) {
+  if (!hiddenArtworks.some((item) => item.id === id)) {
+    structuralFailures.push(`Missing required hidden artwork: ${id}`);
+  }
+}
+for (const id of requiredVisible) {
+  if (!visibleArtworks.some((item) => item.id === id)) {
+    structuralFailures.push(`Missing required visible artwork: ${id}`);
+  }
+}
+for (const id of forbiddenIds) {
+  if (artworks.some((item) => item.id === id)) {
+    structuralFailures.push(`Forbidden artwork still present: ${id}`);
+  }
 }
 
 const missingFiles = artworks.filter((item) => !item.commonsFile);
