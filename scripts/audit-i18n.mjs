@@ -108,6 +108,9 @@ const requiredUiKeys = [
   'backToTopAria',
   'sharedOwnerEyebrow',
   'sharedResultKicker',
+  'heroBrandEn',
+  'heroBrandZh',
+  'heroTagline',
 ];
 
 for (const key of requiredUiKeys) {
@@ -128,6 +131,9 @@ const removedUiKeys = [
   'aboutStart',
   'collectionPreviewNote',
   'tempoNote',
+  'heroEyebrowEn',
+  'heroEyebrowZh',
+  'heroTitle',
 ];
 
 for (const key of removedUiKeys) {

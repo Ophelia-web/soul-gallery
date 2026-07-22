@@ -10,9 +10,9 @@ export const UI = {
     footerTagline: 'Discover the masterpiece that reflects your soul.',
     footerLegal:
       '这是一场审美化的人格体验，不用于心理诊断。画作图像由 Wikimedia Commons 按已核验的文件来源在线载入，版权状态以原始来源页为准。',
-    heroEyebrowEn: 'A PERSONALITY EXHIBITION',
-    heroEyebrowZh: '人格肖像展',
-    heroTitle: '你的灵魂，<br />早已被一位<br />画家画过。',
+    heroBrandEn: 'Soul Gallery',
+    heroBrandZh: '灵魂画廊',
+    heroTagline: '你的灵魂，早已被一位画家画过。',
     heroIntro:
       '回答32道选择题。你不需要懂艺术，只需忠于自己的第一反应。我们会在114幅画作中，寻找那幅与你拥有相似节奏、光线与情绪结构的作品。',
     startCta: '领取门票',
@@ -174,9 +174,9 @@ export const UI = {
     footerTagline: 'Discover the masterpiece that reflects your soul.',
     footerLegal:
       'This is an aesthetic personality experience, not a clinical diagnosis. Artwork images are loaded online from verified Wikimedia Commons files; rights status follows each source page.',
-    heroEyebrowEn: 'A PERSONALITY EXHIBITION',
-    heroEyebrowZh: '',
-    heroTitle: 'Your soul<br />has already been painted.',
+    heroBrandEn: 'Soul Gallery',
+    heroBrandZh: '灵魂画廊',
+    heroTagline: 'A painter may have captured your soul long before you arrived.',
     heroIntro:
       'Answer 32 questions. You do not need to know art; you only need to respond honestly. Among 114 paintings, we will look for the work that shares your rhythm, light, and emotional structure.',
     startCta: 'Get your ticket',

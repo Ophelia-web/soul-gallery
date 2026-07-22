@@ -668,8 +668,11 @@ function renderHome() {
   app.innerHTML = shell(`
     <section class="hero">
       <div class="hero-copy">
-        ${bilingualEyebrow(`${t('heroEyebrowEn')} · 2026`, t('heroEyebrowZh'))}
-        <h1>${t('heroTitle')}</h1>
+        <div class="hero-branding">
+          <div class="hero-branding-en">${t('heroBrandEn')}</div>
+          <div class="hero-branding-zh">${t('heroBrandZh')}</div>
+          <p class="hero-tagline">${t('heroTagline')}</p>
+        </div>
         <p class="hero-intro">${t('heroIntro')}</p>
         <div class="hero-actions">
           <button class="button button--ghost" data-action="collection">${t('collectionCta')}</button>
