@@ -62,6 +62,12 @@ export const UI = {
     ticketNameLabel: '票面姓名',
     ticketNamePlaceholder: '你的名字或昵称',
     ticketNameHint: '最多30个字符。只有在你主动分享结果时，这个名字才会进入分享链接。',
+    ticketPreviewAria: '带有姓名和随机票号的 Soul Gallery 电子门票预览',
+    ticketPreviewNote: '门票预览会随着姓名实时更新。下载文件为1536 × 1024像素的高清PNG。',
+    downloadTicket: '下载电子票',
+    ticketDownloaded: '电子票已下载。',
+    ticketDownloadError: '电子票生成失败，请稍后再试。',
+    ticketTemplateError: '门票底图暂时无法载入。',
     nameRequired: '请先在门票上留下名字。',
     quizProgressAria: '答题进度',
     optionsAria: '选择一个最接近你的答案',
@@ -222,6 +228,14 @@ export const UI = {
     ticketNamePlaceholder: 'Your name or nickname',
     ticketNameHint:
       'Up to 30 characters. The name is added to a link only when you choose to share your result.',
+    ticketPreviewAria:
+      'Soul Gallery admission ticket preview with a visitor name and random ticket number',
+    ticketPreviewNote:
+      'The preview updates as you type. The downloaded ticket is a 1536 × 1024 high-resolution PNG.',
+    downloadTicket: 'Download ticket',
+    ticketDownloaded: 'Your ticket has been downloaded.',
+    ticketDownloadError: 'The ticket could not be generated. Please try again.',
+    ticketTemplateError: 'The ticket template could not be loaded.',
     nameRequired: 'Please add a name to your ticket first.',
     quizProgressAria: 'Quiz progress',
     optionsAria: 'Choose the answer closest to you',

@@ -100,45 +100,33 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 13px;
+  min-width: 0;
   padding: 0;
   cursor: pointer;
   text-align: left;
 }
 
-.brand-mark {
-  width: 35px;
-  height: 43px;
-  border: 1px solid var(--green);
+.brand-emblem {
+  width: 86px;
+  height: 48px;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
-  position: relative;
-  background: var(--paper);
+  overflow: hidden;
 }
 
-.brand-mark::before,
-.brand-mark::after {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border: 1px solid var(--gold);
-}
-
-.brand-mark::after {
-  inset: 7px;
-  border-color: rgba(23,63,54,.35);
-}
-
-.brand-mark i {
-  width: 9px;
-  height: 14px;
-  border-radius: 50% 50% 45% 45%;
-  background: var(--wine);
-  z-index: 2;
-  transform: rotate(18deg);
+.brand-emblem img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  transform: scale(1.12);
 }
 
 .brand-copy {
   display: grid;
+  min-width: 0;
   line-height: 1;
 }
 
@@ -1873,115 +1861,30 @@ img {
 
 .ticket-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
-  gap: clamp(40px, 7vw, 100px);
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .55fr);
+  gap: clamp(44px, 6vw, 90px);
   align-items: center;
 }
 
-.admission-ticket {
-  min-height: 390px;
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: clamp(28px, 4vw, 52px);
-  color: #f3eee4;
-  background:
-    radial-gradient(
-      circle at 82% 18%,
-      rgba(208, 187, 128, .18),
-      transparent 15rem
-    ),
-    linear-gradient(
-      135deg,
-      #112f29,
-      #1e493e
-    );
-  border: 1px solid var(--gold);
-  box-shadow: 0 35px 90px rgba(33, 37, 31, .24);
+.ticket-preview-panel {
+  min-width: 0;
 }
 
-.admission-ticket::before {
-  content: "";
-  position: absolute;
-  inset: 12px;
-  border: 1px solid rgba(208, 187, 128, .35);
-  pointer-events: none;
-}
-
-.ticket-brand,
-.ticket-footer {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.ticket-brand strong {
+.ticket-canvas {
+  width: 100%;
+  height: auto;
   display: block;
-  font-family: var(--serif);
-  font-size: clamp(25px, 3vw, 38px);
-  font-weight: 500;
+  aspect-ratio: 3 / 2;
+  background: #173f36;
+  box-shadow: 0 35px 90px rgba(33, 37, 31, .22);
 }
 
-.ticket-brand span,
-.ticket-footer span,
-.ticket-center p {
-  color: rgba(243, 238, 228, .64);
-  font-size: 9px;
-  letter-spacing: .16em;
-}
-
-.ticket-admit {
-  align-self: flex-start;
-  padding: 8px 11px;
-  border: 1px solid rgba(208, 187, 128, .55);
-  font-size: 9px;
-  letter-spacing: .14em;
-}
-
-.ticket-center {
-  position: relative;
-  z-index: 1;
-  align-self: center;
-  padding: 45px 0;
-}
-
-.ticket-center h2 {
-  margin: 9px 0 0;
-  overflow-wrap: anywhere;
-  font-family: var(--serif);
-  font-size: clamp(44px, 6vw, 82px);
-  line-height: 1;
-  font-weight: 500;
-  color: var(--gold-light);
-}
-
-.ticket-footer {
-  align-items: flex-end;
-  padding-top: 18px;
-  border-top: 1px dashed rgba(208, 187, 128, .42);
-}
-
-.ticket-footer > div:first-child {
-  display: grid;
-  gap: 5px;
-}
-
-.ticket-footer strong {
-  font-family: var(--serif);
-  font-weight: 500;
-}
-
-.ticket-stat {
-  display: grid;
-  justify-items: end;
-  gap: 3px;
-}
-
-.ticket-stat strong {
-  font-size: 28px;
+.ticket-preview-note {
+  margin: 15px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
 }
 
 .ticket-form {
@@ -2018,6 +1921,17 @@ img {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.7;
+}
+
+.ticket-form-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.ticket-form-actions .button {
+  width: 100%;
 }
 
 @media (max-width: 760px) {
@@ -2061,10 +1975,6 @@ img {
     border-top: 1px solid var(--gold);
   }
 
-  .ticket-layout {
-    grid-template-columns: 1fr;
-  }
-
   .ticket-intro h1 {
     max-width: 8.5em;
     white-space: normal;
@@ -2076,25 +1986,6 @@ img {
   .ticket-intro > p:last-child {
     max-width: none;
   }
-
-  .admission-ticket {
-    min-height: 340px;
-    padding: 30px 25px;
-  }
-
-  .ticket-brand {
-    align-items: flex-start;
-  }
-
-  .ticket-footer {
-    display: grid;
-    grid-template-columns: 1fr repeat(3, auto);
-    gap: 12px;
-  }
-
-  .ticket-center h2 {
-    font-size: clamp(42px, 13vw, 66px);
-  }
 }
 
 @media (max-width: 430px) {
@@ -2104,18 +1995,6 @@ img {
 
   .museum-card h2 {
     max-width: 8em;
-  }
-
-  .ticket-footer {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .ticket-footer > div:first-child {
-    grid-column: 1 / -1;
-  }
-
-  .ticket-stat {
-    justify-items: start;
   }
 }
 
@@ -2381,6 +2260,19 @@ img {
 }
 
 @media (max-width: 860px) {
+  .ticket-layout {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .ticket-preview-panel {
+    order: 1;
+  }
+
+  .ticket-form {
+    order: 2;
+  }
+
   .result-layout {
     grid-template-columns: 1fr;
   }
@@ -2533,20 +2425,35 @@ img {
   }
 
   .brand {
+    gap: 8px;
     flex-shrink: 0;
   }
 
-  .brand-mark {
-    width: 29px;
-    height: 36px;
+  .brand-emblem {
+    width: 58px;
+    height: 34px;
   }
 
   .brand-copy strong {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .brand-copy small {
     display: none;
+  }
+
+  .ticket-canvas {
+    width: calc(100vw - 30px);
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .ticket-preview-note {
+    font-size: 10px;
+  }
+
+  .ticket-form-actions {
+    gap: 10px;
   }
 
   .header-nav {

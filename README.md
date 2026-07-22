@@ -8,6 +8,7 @@ Soul Gallery 是一场以世界名画为结果的人格体验。访客回答 32 
 
 - 古典而现代的中英双语视觉体验
 - 带访客姓名的 Soul Gallery 电子门票
+- 可下载的 1536 × 1024 高清 PNG 电子票
 - 32 道选择题
 - 八项人格光谱与一项思考节奏
 - 108 幅公开画作与 6 幅隐藏画作
@@ -19,6 +20,16 @@ Soul Gallery 是一场以世界名画为结果的人格体验。访客回答 32 
 - 可携带访客姓名的结果分享链接
 - 桌面、平板与手机响应式布局
 - Wikimedia Commons 精确文件在线载入
+
+## 品牌素材
+
+```text
+assets/branding/
+├── soul-gallery-emblem.png
+└── soul-gallery-ticket-template.png
+```
+
+导航栏使用透明馆徽图片。门票页使用完整英文门票模板，通过浏览器原生 Canvas API 将姓名与随机票号写入预览，并可下载为高清 PNG。
 
 ## 测试如何运作
 
@@ -59,6 +70,9 @@ soul-gallery/
 │   ├── commons.js
 │   └── scoring.js
 ├── assets/
+│   ├── branding/
+│   │   ├── soul-gallery-emblem.png
+│   │   └── soul-gallery-ticket-template.png
 │   └── favicon.svg
 ├── scripts/
 │   ├── audit-commons.mjs

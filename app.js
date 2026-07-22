@@ -111,14 +111,187 @@ function saveVisitorName(name) {
 }
 
 function createTicketNumber() {
-  const date = new Date();
-  const datePart = [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, '0'),
-    String(date.getDate()).padStart(2, '0'),
-  ].join('');
-  const randomPart = Math.random().toString(36).slice(2, 7).toUpperCase();
-  return `SG-${datePart}-${randomPart}`;
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const randomPart = Array.from(
+    { length: 5 },
+    () => alphabet[Math.floor(Math.random() * alphabet.length)]
+  ).join('');
+
+  return `SG-2026-${randomPart}`;
+}
+
+const TICKET_TEMPLATE_PATH = './assets/branding/soul-gallery-ticket-template.png';
+const TICKET_CANVAS_WIDTH = 1536;
+const TICKET_CANVAS_HEIGHT = 1024;
+const TICKET_NAME_FONT =
+  '"Baskerville", "Iowan Old Style", "Songti SC", "STSong", "SimSun", serif';
+
+let ticketTemplatePromise = null;
+
+function loadTicketTemplate() {
+  if (ticketTemplatePromise) {
+    return ticketTemplatePromise;
+  }
+
+  ticketTemplatePromise = new Promise((resolve, reject) => {
+    const image = new Image();
+    image.decoding = 'async';
+
+    image.addEventListener('load', () => resolve(image), { once: true });
+    image.addEventListener(
+      'error',
+      () => reject(new Error('Soul Gallery ticket template failed to load.')),
+      { once: true }
+    );
+
+    image.src = TICKET_TEMPLATE_PATH;
+  });
+
+  return ticketTemplatePromise;
+}
+
+function fitCanvasFont(
+  context,
+  text,
+  { maxWidth, maxSize, minSize, fontFamily, fontWeight = 500 }
+) {
+  let size = maxSize;
+
+  while (size > minSize) {
+    context.font = `${fontWeight} ${size}px ${fontFamily}`;
+
+    if (context.measureText(text).width <= maxWidth) {
+      break;
+    }
+
+    size -= 2;
+  }
+
+  return size;
+}
+
+async function drawTicketCanvas() {
+  const canvas = document.querySelector('[data-ticket-canvas]');
+
+  if (!canvas) {
+    return;
+  }
+
+  const context = canvas.getContext('2d');
+
+  if (!context) {
+    return;
+  }
+
+  canvas.width = TICKET_CANVAS_WIDTH;
+  canvas.height = TICKET_CANVAS_HEIGHT;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  try {
+    const template = await loadTicketTemplate();
+    context.drawImage(template, 0, 0, TICKET_CANVAS_WIDTH, TICKET_CANVAS_HEIGHT);
+  } catch (error) {
+    console.error(error);
+    showToast(t('ticketTemplateError'));
+    return;
+  }
+
+  const name = sanitizeVisitorName(state.visitorName);
+
+  if (name) {
+    const nameFontSize = fitCanvasFont(context, name, {
+      maxWidth: 610,
+      maxSize: 60,
+      minSize: 30,
+      fontFamily: TICKET_NAME_FONT,
+      fontWeight: 500,
+    });
+
+    context.save();
+    context.font = `500 ${nameFontSize}px ${TICKET_NAME_FONT}`;
+    context.fillStyle = '#173f36';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(name, 660, 635);
+    context.restore();
+  }
+
+  const ticketSuffix = String(state.ticketNumber || '').replace('SG-2026-', '');
+
+  context.save();
+  context.font = '600 31px "Baskerville", "Times New Roman", serif';
+  context.fillStyle = '#d2b45e';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+
+  if ('letterSpacing' in context) {
+    context.letterSpacing = '2px';
+  }
+
+  context.fillText(ticketSuffix, 1372, 567);
+  context.restore();
+}
+
+function safeDownloadName(value) {
+  const cleaned = String(value || '')
+    .trim()
+    .replace(/[<>:"/\\|?*\u0000-\u001F]/g, '-')
+    .replace(/\s+/g, '-')
+    .slice(0, 40);
+
+  return cleaned || 'Visitor';
+}
+
+function canvasToBlob(canvas, type = 'image/png', quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error('Ticket image could not be generated.'));
+        }
+      },
+      type,
+      quality
+    );
+  });
+}
+
+async function downloadTicket() {
+  const name = sanitizeVisitorName(state.visitorName);
+
+  if (!name) {
+    showToast(t('nameRequired'));
+    return;
+  }
+
+  await drawTicketCanvas();
+
+  const canvas = document.querySelector('[data-ticket-canvas]');
+
+  if (!canvas) {
+    showToast(t('ticketDownloadError'));
+    return;
+  }
+
+  try {
+    const blob = await canvasToBlob(canvas, 'image/png');
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+
+    anchor.href = url;
+    anchor.download = `Soul-Gallery-Ticket-${safeDownloadName(name)}-${state.ticketNumber}.png`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(t('ticketDownloaded'));
+  } catch (error) {
+    console.error(error);
+    showToast(t('ticketDownloadError'));
+  }
 }
 
 function getInitialLanguage() {
@@ -361,7 +534,15 @@ function shell(content, { minimal = false } = {}) {
     <div class="site-shell ${minimal ? 'site-shell--minimal' : ''}">
       <header class="site-header">
         <button class="brand" data-action="home" aria-label="${t('navHomeAria')}">
-          <span class="brand-mark" aria-hidden="true"><i></i></span>
+          <span class="brand-emblem" aria-hidden="true">
+            <img
+              src="./assets/branding/soul-gallery-emblem.png"
+              alt=""
+              width="1536"
+              height="1024"
+              decoding="async"
+            />
+          </span>
           <span class="brand-copy">
             <strong>Soul Gallery</strong>
             <small>${t('brandSmall')}</small>
@@ -565,7 +746,6 @@ function renderTicket() {
   }
 
   const safeName = escapeHtml(state.visitorName);
-  const displayName = safeName || t('ticketUnnamed');
 
   app.innerHTML = shell(`
     <section class="ticket-page">
@@ -576,47 +756,19 @@ function renderTicket() {
       </div>
 
       <div class="ticket-layout">
-        <article class="admission-ticket">
-          <div class="ticket-edge ticket-edge--left"></div>
-          <div class="ticket-edge ticket-edge--right"></div>
-
-          <header class="ticket-brand">
-            <div>
-              <strong>Soul Gallery</strong>
-              <span>PERSONALITY EXHIBITION · 2026</span>
-            </div>
-            <span class="ticket-admit">
-              ${t('ticketAdmitOne')}
-            </span>
-          </header>
-
-          <div class="ticket-center">
-            <p>${t('ticketHolderLabel')}</p>
-            <h2 data-ticket-name>${displayName}</h2>
-          </div>
-
-          <footer class="ticket-footer">
-            <div>
-              <span>${t('ticketNumberLabel')}</span>
-              <strong>${state.ticketNumber}</strong>
-            </div>
-
-            <div class="ticket-stat">
-              <strong>32</strong>
-              <span>${t('ticketQuestions')}</span>
-            </div>
-
-            <div class="ticket-stat">
-              <strong>108</strong>
-              <span>${t('ticketPublic')}</span>
-            </div>
-
-            <div class="ticket-stat">
-              <strong>6</strong>
-              <span>${t('ticketHidden')}</span>
-            </div>
-          </footer>
-        </article>
+        <div class="ticket-preview-panel">
+          <canvas
+            class="ticket-canvas"
+            data-ticket-canvas
+            width="1536"
+            height="1024"
+            role="img"
+            aria-label="${t('ticketPreviewAria')}"
+          ></canvas>
+          <p class="ticket-preview-note">
+            ${t('ticketPreviewNote')}
+          </p>
+        </div>
 
         <div class="ticket-form">
           <label for="visitor-name">
@@ -635,14 +787,25 @@ function renderTicket() {
 
           <p>${t('ticketNameHint')}</p>
 
-          <button
-            class="button button--primary button--large"
-            data-action="enter-quiz"
-            ${safeName ? '' : 'disabled'}
-          >
-            ${t('enterNow')}
-            <i aria-hidden="true">→</i>
-          </button>
+          <div class="ticket-form-actions">
+            <button
+              class="button button--ghost button--large"
+              data-action="download-ticket"
+              ${safeName ? '' : 'disabled'}
+            >
+              ${t('downloadTicket')}
+              <i aria-hidden="true">↓</i>
+            </button>
+
+            <button
+              class="button button--primary button--large"
+              data-action="enter-quiz"
+              ${safeName ? '' : 'disabled'}
+            >
+              ${t('enterNow')}
+              <i aria-hidden="true">→</i>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -651,25 +814,32 @@ function renderTicket() {
   bindGlobalActions();
 
   const input = app.querySelector('[data-visitor-name]');
-  const ticketName = app.querySelector('[data-ticket-name]');
+  const downloadButton = app.querySelector('[data-action="download-ticket"]');
   const enterButton = app.querySelector('[data-action="enter-quiz"]');
 
   input?.addEventListener('input', () => {
     state.visitorName = sanitizeVisitorName(input.value);
 
-    if (ticketName) {
-      ticketName.textContent = state.visitorName || t('ticketUnnamed');
+    if (downloadButton) {
+      downloadButton.disabled = !state.visitorName;
     }
 
     if (enterButton) {
       enterButton.disabled = !state.visitorName;
     }
+
+    drawTicketCanvas().catch(console.error);
   });
 
   input?.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && state.visitorName && enterButton) {
       enterButton.click();
     }
+  });
+
+  drawTicketCanvas().catch((error) => {
+    console.error(error);
+    showToast(t('ticketTemplateError'));
   });
 
   requestAnimationFrame(() => input?.focus());
@@ -1312,6 +1482,7 @@ function handleAction(event) {
       }
       break;
     case 'ticket':
+      state.ticketNumber = createTicketNumber();
       renderTicket();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
@@ -1365,11 +1536,15 @@ function handleAction(event) {
       expandCollection();
       break;
     case 'restart':
+      state.ticketNumber = createTicketNumber();
       renderTicket();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     case 'share':
       shareResult();
+      break;
+    case 'download-ticket':
+      downloadTicket();
       break;
     case 'open-source':
       openImageSource();
