@@ -1,4 +1,5 @@
 import { artworks, visibleArtworks, hiddenArtworks } from '../data/artworks.js';
+import { ARTWORK_RATIOS } from '../data/artwork-ratios.js';
 import { writeFileSync } from 'node:fs';
 
 const MIN_ASPECT_RATIO = 0.55;
@@ -253,6 +254,35 @@ if (duplicates.length) {
   structuralFailures.push(`Duplicate commonsFile values: ${[...new Set(duplicates)].join(', ')}`);
 }
 
+const ratioIds = Object.keys(ARTWORK_RATIOS);
+if (ratioIds.length !== 114) {
+  structuralFailures.push(`Expected 114 ARTWORK_RATIOS keys, found ${ratioIds.length}`);
+}
+
+const artworkIds = new Set(artworks.map((item) => item.id));
+const ratioIdSet = new Set(ratioIds);
+
+for (const artwork of artworks) {
+  const ratio = Number(ARTWORK_RATIOS[artwork.id]);
+  if (!(artwork.id in ARTWORK_RATIOS)) {
+    structuralFailures.push(`Missing ARTWORK_RATIOS entry for ${artwork.id}`);
+  } else if (!Number.isFinite(ratio) || ratio <= 0) {
+    structuralFailures.push(`Invalid ARTWORK_RATIOS value for ${artwork.id}: ${ARTWORK_RATIOS[artwork.id]}`);
+  }
+}
+
+for (const id of ratioIds) {
+  if (!artworkIds.has(id)) {
+    structuralFailures.push(`Extra ARTWORK_RATIOS id not in artworks: ${id}`);
+  }
+}
+
+for (const id of artworkIds) {
+  if (!ratioIdSet.has(id)) {
+    structuralFailures.push(`Artwork missing from ARTWORK_RATIOS: ${id}`);
+  }
+}
+
 console.log('Soul Gallery Commons image audit');
 console.log(
   `Artworks: ${artworks.length} | Visible: ${visibleArtworks.length} | Hidden: ${hiddenArtworks.length}`
@@ -294,6 +324,21 @@ for (let index = 0; index < artworks.length; index += BATCH_SIZE) {
 
 const failed = results.filter((item) => item.status === 'FAIL');
 const passed = results.filter((item) => item.status === 'PASS');
+
+for (const result of results) {
+  if (result.status !== 'PASS' || !result.width || !result.height) {
+    continue;
+  }
+
+  const staticRatio = Number(ARTWORK_RATIOS[result.id]);
+  const liveRatio = result.width / result.height;
+
+  if (!Number.isFinite(staticRatio) || Math.abs(staticRatio - liveRatio) >= 0.001) {
+    structuralFailures.push(
+      `ARTWORK_RATIOS mismatch for ${result.id}: static=${staticRatio}, live=${liveRatio.toFixed(4)}`
+    );
+  }
+}
 
 console.log('---');
 console.log(`PASS: ${passed.length}/${results.length}`);

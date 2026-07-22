@@ -10,12 +10,10 @@
   --gold-light: #d0bb80;
   --line: rgba(31, 40, 36, 0.18);
   --shadow: 0 26px 70px rgba(46, 39, 27, 0.14);
-  --serif-latin:
+  --serif:
     "Iowan Old Style",
     "Baskerville",
     "Times New Roman",
-    serif;
-  --serif-cjk:
     "Songti SC",
     "STSong",
     "SimSun",
@@ -27,15 +25,6 @@
     "Microsoft YaHei",
     Arial,
     sans-serif;
-  --display-serif: var(--serif-latin);
-}
-
-html[lang="zh-CN"] {
-  --display-serif: var(--serif-cjk);
-}
-
-html[lang="en"] {
-  --display-serif: var(--serif-latin);
 }
 
 * {
@@ -154,7 +143,7 @@ img {
 }
 
 .brand-copy strong {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 20px;
   letter-spacing: .04em;
   font-weight: 600;
@@ -215,7 +204,7 @@ img {
 .hero h1,
 .collection-hero h1,
 .about-page > h1 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-weight: 500;
   font-size: clamp(52px, 6.3vw, 96px);
   line-height: 1.04;
@@ -227,7 +216,7 @@ img {
   max-width: 640px;
   margin: 34px 0 0;
   color: #505751;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: clamp(18px, 1.55vw, 23px);
   line-height: 1.9;
 }
@@ -312,7 +301,7 @@ img {
 }
 
 .hero-facts dt {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 28px;
 }
 
@@ -342,11 +331,14 @@ img {
 
 .hero-art {
   position: absolute;
+  height: auto;
   padding: 8px;
   background: #d0b979;
   box-shadow: var(--shadow);
   transform: rotate(var(--tilt));
-  transition: transform .35s ease, z-index .01s;
+  transition:
+    transform .35s ease,
+    z-index .01s;
 }
 
 .hero-art::before {
@@ -365,7 +357,21 @@ img {
 
 .hero-art .art-image {
   width: 100%;
+  height: auto;
+  aspect-ratio: var(--image-ratio, 4 / 5);
+  background: transparent;
+}
+
+.hero-art .art-image img {
+  width: 100%;
   height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+}
+
+.hero-art:hover .art-image img {
+  transform: none;
 }
 
 .hero-art span {
@@ -374,7 +380,7 @@ img {
   bottom: -31px;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 12px;
   color: var(--muted);
   opacity: 0;
@@ -385,12 +391,53 @@ img {
   opacity: 1;
 }
 
-.hero-art--1 { width: 30%; height: 44%; left: 29%; top: 2%; --tilt: -3deg; z-index: 5; }
-.hero-art--2 { width: 24%; height: 37%; left: 6%; top: 19%; --tilt: 4deg; z-index: 4; }
-.hero-art--3 { width: 29%; height: 42%; right: 3%; top: 14%; --tilt: 3deg; z-index: 3; }
-.hero-art--4 { width: 31%; height: 34%; left: 8%; bottom: 4%; --tilt: -4deg; z-index: 2; }
-.hero-art--5 { width: 27%; height: 40%; left: 40%; bottom: 0; --tilt: 2deg; z-index: 6; }
-.hero-art--6 { width: 27%; height: 35%; right: 1%; bottom: 3%; --tilt: -2deg; z-index: 1; }
+.hero-art--1 {
+  width: 34%;
+  left: 31%;
+  top: 4%;
+  --tilt: -3deg;
+  z-index: 5;
+}
+
+.hero-art--2 {
+  width: 22%;
+  left: 5%;
+  top: 23%;
+  --tilt: 4deg;
+  z-index: 4;
+}
+
+.hero-art--3 {
+  width: 20%;
+  right: 3%;
+  top: 17%;
+  --tilt: 3deg;
+  z-index: 3;
+}
+
+.hero-art--4 {
+  width: 31%;
+  left: 7%;
+  bottom: 7%;
+  --tilt: -4deg;
+  z-index: 2;
+}
+
+.hero-art--5 {
+  width: 32%;
+  left: 39%;
+  bottom: 1%;
+  --tilt: 2deg;
+  z-index: 6;
+}
+
+.hero-art--6 {
+  width: 21%;
+  right: 2%;
+  bottom: 4%;
+  --tilt: -2deg;
+  z-index: 1;
+}
 
 
 
@@ -460,7 +507,7 @@ img {
   content: "原作图像暂时未能载入";
   position: absolute;
   color: rgba(255,255,255,.75);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 12px;
   letter-spacing: .12em;
   z-index: 2;
@@ -474,104 +521,135 @@ img {
 }
 
 .admission-notice {
-  padding: 85px 0 70px;
+  padding: 96px 0 110px;
+  scroll-margin-top: 30px;
 }
 
 .admission-heading {
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: clamp(24px, 5vw, 90px);
-  align-items: start;
+  max-width: 760px;
+  margin-bottom: 50px;
 }
 
-.admission-intro {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 35px;
-  margin-top: 42px;
-  padding-left: calc(80px + clamp(24px, 5vw, 90px));
-}
-
-.admission-intro p {
+.admission-heading h2 {
   margin: 0;
-  color: #545b55;
-  font-family: var(--display-serif);
-  font-size: 17px;
-  line-height: 1.85;
-}
-
-.admission-intro strong {
-  color: var(--green);
-  font-weight: 600;
+  font-family: var(--serif);
+  font-size: clamp(48px, 5vw, 72px);
+  line-height: 1.05;
+  font-weight: 500;
+  letter-spacing: -.035em;
 }
 
 .admission-rules {
-  margin-top: 70px;
-  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 50px;
+  border: 1px solid var(--line);
+  background: var(--line);
 }
 
 .admission-rules article {
+  min-height: 260px;
   display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: clamp(24px, 5vw, 90px);
-  min-height: auto;
-  padding: 34px 0;
-  background: transparent;
-  border-bottom: 1px solid var(--line);
+  grid-template-columns: 42px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding: 40px;
+  background: rgba(243, 238, 228, .97);
 }
 
 .admission-rules article > span {
-  margin: 2px 0 0;
-  font-family: var(--display-serif);
+  margin: 3px 0 0;
   color: var(--wine);
-  font-size: 18px;
+  font-family: var(--serif);
+  font-size: 20px;
 }
 
 .admission-rules h3 {
-  margin: 0 0 14px;
-  font-family: var(--display-serif);
-  font-size: clamp(28px, 3vw, 36px);
+  margin: 0 0 17px;
+  font-family: var(--serif);
+  font-size: clamp(28px, 2.4vw, 36px);
+  line-height: 1.2;
   font-weight: 500;
 }
 
 .admission-rules p {
   margin: 0;
-  max-width: 760px;
+  max-width: 620px;
   color: var(--muted);
-  font-family: var(--display-serif);
-  font-size: 17px;
+  font-family: var(--serif);
+  font-size: 16px;
   line-height: 1.85;
 }
 
-.admission-method {
+.curatorial-method {
   display: grid;
-  grid-template-columns: .9fr 1.1fr;
-  gap: 80px;
-  padding: 70px 0 40px;
-  margin-top: 20px;
-  border-top: 0;
-  border-bottom: 0;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 1px;
+  margin-top: 80px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--line);
 }
 
-.admission-method h3 {
-  margin: 0;
-  font-family: var(--display-serif);
-  font-size: clamp(28px, 3.4vw, 42px);
-  font-weight: 500;
-  letter-spacing: -.02em;
-  line-height: 1.2;
+.curatorial-method article {
+  min-width: 0;
+  padding: clamp(44px, 5vw, 72px);
+  background: var(--paper);
 }
 
-.admission-method > p {
+.curator-note-panel {
+  display: grid;
+  align-content: start;
+  gap: 24px;
+}
+
+.curator-note-panel > p {
   margin: 0;
   color: #545b55;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 17px;
-  line-height: 1.85;
+  line-height: 1.9;
+}
+
+.curator-note-panel strong {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.method-panel {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(23, 63, 54, .045),
+      rgba(184, 154, 85, .055)
+    ),
+    var(--paper) !important;
+}
+
+.method-panel h3 {
+  max-width: 13em;
+  margin: 0 0 35px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(42px, 4.5vw, 66px);
+  line-height: 1.12;
+  font-weight: 500;
+  letter-spacing: -.035em;
+}
+
+.method-panel > p {
+  margin: 0;
+  color: #545b55;
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.9;
 }
 
 .admission-cta {
-  padding: 10px 0 20px;
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 48px;
 }
 
 .manifesto {
@@ -584,21 +662,19 @@ img {
 
 .section-number {
   color: var(--gold);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 34px;
 }
 
 .manifesto h2,
-.admission-heading h2,
 .closing-cta h2,
 .interpretation h2,
 .spectrum-heading h2,
 .companions-heading h2,
 .museum-card h2,
 .hidden-corridor h2,
-.about-method h2,
-.admission-method h2 {
-  font-family: var(--display-serif);
+.about-method h2 {
+  font-family: var(--serif);
   font-size: clamp(34px, 4vw, 58px);
   line-height: 1.15;
   font-weight: 500;
@@ -619,7 +695,7 @@ img {
 .about-method > p {
   margin: 0;
   color: #545b55;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 17px;
   line-height: 1.85;
 }
@@ -647,13 +723,13 @@ img {
 .experience-grid article > span {
   display: block;
   color: var(--wine);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 18px;
   margin-bottom: 55px;
 }
 
 .experience-grid h3 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 28px;
   font-weight: 500;
   margin: 0 0 18px;
@@ -688,7 +764,7 @@ img {
 }
 
 .site-footer > div span:first-child {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   color: var(--ink);
   font-size: 15px;
 }
@@ -759,7 +835,7 @@ img {
   position: relative;
   max-width: 800px;
   margin: 0;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-weight: 500;
   font-size: clamp(34px, 4.5vw, 56px);
   line-height: 1.3;
@@ -807,7 +883,7 @@ img {
   display: grid;
   place-items: center;
   border: 1px solid var(--gold);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   color: var(--wine);
   font-size: 13px;
 }
@@ -859,7 +935,7 @@ img {
 }
 
 .curation-page h1 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: clamp(38px, 6vw, 72px);
   font-weight: 500;
   margin: 0;
@@ -868,7 +944,7 @@ img {
 .curation-status {
   min-height: 24px;
   color: rgba(243,238,228,.72);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 17px;
   margin: 24px 0;
 }
@@ -1012,7 +1088,7 @@ img {
 }
 
 .result-copy h1 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: clamp(58px, 7vw, 104px);
   line-height: .95;
   font-weight: 500;
@@ -1021,7 +1097,7 @@ img {
 }
 
 .result-copy h2 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: clamp(20px, 2.1vw, 30px);
   font-style: italic;
   font-weight: 400;
@@ -1043,7 +1119,7 @@ img {
 }
 
 .match-score strong {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-weight: 400;
   font-size: 88px;
   line-height: .8;
@@ -1053,7 +1129,7 @@ img {
 .match-score > span {
   display: grid;
   margin-left: 8px;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 24px;
   color: var(--green);
 }
@@ -1071,7 +1147,7 @@ img {
   margin: 0;
   padding: 18px 0 18px 24px;
   border-left: 2px solid var(--gold);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: clamp(20px, 2vw, 28px);
   line-height: 1.65;
   color: var(--green);
@@ -1081,7 +1157,7 @@ img {
   margin: 24px 0 0;
   max-width: 720px;
   color: #4d544e;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 17px;
   line-height: 1.95;
 }
@@ -1139,7 +1215,7 @@ img {
 
 .interpretation-cards p {
   margin: 0;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 16px;
   line-height: 1.85;
   color: #505751;
@@ -1247,14 +1323,14 @@ img {
   position: absolute;
   right: 20px;
   top: 18px;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   color: var(--gold);
   font-size: 28px;
 }
 
 .companion-card h3 {
   margin: 0 0 10px;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 27px;
   font-weight: 500;
 }
@@ -1262,7 +1338,7 @@ img {
 .companion-card p {
   margin: 0 0 18px;
   color: var(--muted);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 14px;
   line-height: 1.7;
   padding-right: 34px;
@@ -1295,7 +1371,7 @@ img {
 }
 
 .museum-details strong {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 30px;
   font-weight: 500;
 }
@@ -1318,13 +1394,13 @@ img {
 }
 
 .result-final p {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 20px;
   color: var(--muted);
 }
 
 .text-button--large {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 21px;
   color: var(--green);
 }
@@ -1336,7 +1412,7 @@ img {
 
 .collection-hero p:last-child {
   max-width: 600px;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   color: var(--muted);
   font-size: 18px;
   line-height: 1.8;
@@ -1364,7 +1440,7 @@ img {
 
 .collection-index {
   position: static;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 30px;
   line-height: 1;
   color: rgba(23,63,54,.34);
@@ -1381,7 +1457,7 @@ img {
 }
 
 .collection-copy h2 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 25px;
   font-weight: 500;
   margin: 8px 0 4px;
@@ -1390,7 +1466,7 @@ img {
 .collection-copy p {
   margin: 0 0 12px;
   color: var(--muted);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-style: italic;
   font-size: 13px;
 }
@@ -1476,7 +1552,7 @@ img {
 .hidden-mini-frame span {
   position: relative;
   z-index: 1;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 38px;
   color: rgba(243, 238, 228, .8);
 }
@@ -1501,12 +1577,12 @@ img {
 
 .about-grid span {
   color: var(--gold);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 26px;
 }
 
 .about-grid h2 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 29px;
   font-weight: 500;
   margin: 30px 0 16px;
@@ -1555,14 +1631,14 @@ img {
 }
 
 .secret-dialog h2 {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 38px;
   font-weight: 500;
   margin: 0 0 24px;
 }
 
 .secret-dialog p:not(.eyebrow) {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 19px;
   line-height: 1.85;
   color: rgba(243,238,228,.9);
@@ -1616,31 +1692,106 @@ img {
   transform: none;
 }
 
+.collection-back-to-top {
+  position: fixed;
+  left: 28px;
+  bottom: 28px;
+  z-index: 40;
+  appearance: none;
+  border: 1px solid var(--green);
+  padding: 12px 16px;
+  color: var(--green);
+  background: rgba(243, 238, 228, .94);
+  box-shadow: 0 12px 30px rgba(31, 40, 36, .13);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: .08em;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition:
+    opacity .22s ease,
+    transform .22s ease,
+    visibility .22s ease,
+    background .2s ease;
+}
+
+.collection-back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.collection-back-to-top:hover {
+  color: var(--paper);
+  background: var(--green);
+}
+
+.shared-result-owner {
+  max-width: 1120px;
+  margin: 0 0 clamp(55px, 7vw, 95px);
+  padding: clamp(20px, 2vw, 30px) 0 clamp(35px, 4vw, 55px);
+  border-bottom: 1px solid var(--line);
+}
+
+.shared-result-owner > p {
+  margin: 0 0 17px;
+  color: var(--wine);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.shared-result-owner h1 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(54px, 6.5vw, 96px);
+  line-height: 1.02;
+  font-weight: 500;
+  letter-spacing: -.04em;
+  overflow-wrap: anywhere;
+}
+
 .ticket-page {
   padding: clamp(70px, 9vw, 130px) 0 120px;
 }
 
 .ticket-intro {
-  max-width: 760px;
+  width: 100%;
+  max-width: 1120px;
   margin-bottom: 54px;
 }
 
 .ticket-intro h1 {
+  max-width: none;
   margin: 0;
-  font-family: var(--display-serif);
-  font-size: clamp(46px, 5.5vw, 78px);
+  font-family: var(--serif);
+  font-size: clamp(52px, 5vw, 78px);
   line-height: 1.08;
   font-weight: 500;
-  letter-spacing: -0.035em;
+  letter-spacing: -.035em;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .ticket-intro > p:last-child {
-  max-width: 660px;
+  max-width: 980px;
   margin: 26px 0 0;
   color: var(--muted);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 17px;
-  line-height: 1.85;
+  line-height: 1.9;
+  word-break: normal;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+
+.no-break {
+  white-space: nowrap;
 }
 
 .ticket-layout {
@@ -1692,7 +1843,7 @@ img {
 
 .ticket-brand strong {
   display: block;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: clamp(25px, 3vw, 38px);
   font-weight: 500;
 }
@@ -1723,7 +1874,7 @@ img {
 .ticket-center h2 {
   margin: 9px 0 0;
   overflow-wrap: anywhere;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: clamp(44px, 6vw, 82px);
   line-height: 1;
   font-weight: 500;
@@ -1742,7 +1893,7 @@ img {
 }
 
 .ticket-footer strong {
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-weight: 500;
 }
 
@@ -1776,7 +1927,7 @@ img {
   padding: 0 2px;
   color: var(--ink);
   background: transparent;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 28px;
   outline: none;
 }
@@ -1793,8 +1944,65 @@ img {
 }
 
 @media (max-width: 760px) {
+  .admission-notice {
+    padding: 72px 0 82px;
+  }
+
+  .admission-heading {
+    margin-bottom: 36px;
+  }
+
+  .admission-heading h2 {
+    font-size: 46px;
+  }
+
+  .admission-rules {
+    grid-template-columns: 1fr;
+    margin-top: 36px;
+  }
+
+  .admission-rules article {
+    min-height: auto;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    padding: 30px 24px;
+  }
+
+  .admission-rules h3 {
+    font-size: 28px;
+  }
+
+  .curatorial-method {
+    grid-template-columns: 1fr;
+    margin-top: 60px;
+  }
+
+  .curatorial-method article {
+    padding: 42px 24px;
+  }
+
+  .method-panel h3 {
+    font-size: 42px;
+  }
+
+  .admission-cta {
+    padding-top: 36px;
+  }
+
   .ticket-layout {
     grid-template-columns: 1fr;
+  }
+
+  .ticket-intro h1 {
+    max-width: 8.5em;
+    white-space: normal;
+    word-break: normal;
+    line-break: strict;
+    font-size: clamp(44px, 12vw, 60px);
+  }
+
+  .ticket-intro > p:last-child {
+    max-width: none;
   }
 
   .admission-ticket {
@@ -1928,7 +2136,7 @@ img {
 
 .collection-index {
   position: static;
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 30px;
   line-height: 1;
   color: rgba(23, 63, 54, 0.34);
@@ -1961,7 +2169,7 @@ img {
 .collection-title-en {
   margin: 0 0 12px;
   color: var(--muted);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-style: italic;
   font-size: 13px;
 }
@@ -1989,7 +2197,7 @@ img {
 .collection-provenance dd {
   margin: 0;
   color: var(--muted);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 12px;
   line-height: 1.55;
   overflow-wrap: anywhere;
@@ -2021,7 +2229,7 @@ img {
 .tempo-note {
   max-width: 640px;
   color: var(--muted);
-  font-family: var(--display-serif);
+  font-family: var(--serif);
   font-size: 14px;
   line-height: 1.7;
   margin-top: 12px;
@@ -2159,19 +2367,8 @@ img {
   .spectrum-section,
   .museum-card,
   .hidden-corridor,
-  .about-method,
-  .admission-method,
-  .admission-intro,
-  .admission-heading {
+  .about-method {
     grid-template-columns: 1fr;
-  }
-
-  .admission-intro {
-    padding-left: 0;
-  }
-
-  .admission-rules article {
-    grid-template-columns: 48px 1fr;
   }
 
   .experience-grid article {
@@ -2293,7 +2490,7 @@ img {
   .collection-hero h1,
   .about-page > h1 {
     max-width: 9.2em;
-    font-family: var(--display-serif);
+    font-family: var(--serif);
     font-size: clamp(46px, 13.2vw, 60px);
     line-height: 1.08;
     letter-spacing: -.045em;
@@ -2302,7 +2499,7 @@ img {
   .hero-intro {
     max-width: none;
     margin-top: 28px;
-    font-family: var(--display-serif);
+    font-family: var(--serif);
     font-size: 17.5px;
     line-height: 1.9;
   }
@@ -2353,7 +2550,7 @@ img {
   }
 
   .hero-facts dt {
-    font-family: var(--display-serif);
+    font-family: var(--serif);
     font-size: 36px;
     line-height: 1;
   }
@@ -2365,119 +2562,67 @@ img {
 
   .hero-gallery {
     width: 100%;
-    min-height: 500px;
-    margin-top: 4px;
+    min-height: 520px;
+    margin-top: 6px;
   }
 
   .hero-art {
+    height: auto;
     padding: 5px;
     box-shadow: 0 18px 45px rgba(46, 39, 27, .17);
   }
 
   .hero-art--1 {
-    width: 36%;
-    height: 44%;
-    left: 31%;
-    top: 0;
+    width: 44%;
+    left: 28%;
+    top: 1%;
   }
 
   .hero-art--2 {
-    width: 29%;
-    height: 37%;
+    width: 28%;
     left: 0;
-    top: 17%;
+    top: 19%;
   }
 
   .hero-art--3 {
-    width: 31%;
-    height: 40%;
+    width: 25%;
     right: 0;
     top: 14%;
   }
 
   .hero-art--4 {
-    width: 34%;
-    height: 32%;
-    left: 1%;
-    bottom: 2%;
+    width: 39%;
+    left: 0;
+    bottom: 4%;
   }
 
   .hero-art--5 {
-    width: 34%;
-    height: 39%;
-    left: 34%;
+    width: 40%;
+    left: 31%;
     bottom: 0;
   }
 
   .hero-art--6 {
-    width: 31%;
-    height: 32%;
+    width: 25%;
     right: 0;
-    bottom: 3%;
+    bottom: 5%;
   }
 
-  .admission-notice {
-    padding: 70px 0;
+  .shared-result-owner {
+    margin-bottom: 55px;
+    padding-bottom: 35px;
   }
 
-  .admission-heading {
-    display: grid;
-    grid-template-columns: 42px 1fr;
-    gap: 18px;
-    align-items: start;
+  .shared-result-owner h1 {
+    font-size: clamp(40px, 11vw, 56px);
+    line-height: 1.08;
   }
 
-  .admission-heading h2 {
-    font-size: 44px;
-  }
-
-  .admission-intro {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-    margin-top: 38px;
-    padding-left: 0;
-  }
-
-  .admission-rules {
-    margin-top: 55px;
-    border-top: 1px solid var(--line);
-  }
-
-  .admission-rules article {
-    display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 18px;
-    min-height: auto;
-    padding: 30px 0;
-    background: transparent;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .admission-rules article > span {
-    margin: 2px 0 0;
-    font-family: var(--display-serif);
-    color: var(--wine);
-    font-size: 18px;
-  }
-
-  .admission-rules h3 {
-    margin: 0 0 12px;
-    font-size: 27px;
-  }
-
-  .admission-rules p {
-    margin: 0;
-    color: var(--muted);
-    font-family: var(--display-serif);
-    font-size: 16px;
-    line-height: 1.8;
-  }
-
-  .admission-method {
-    grid-template-columns: 1fr;
-    gap: 25px;
-    padding: 55px 0;
+  .collection-back-to-top {
+    left: 15px;
+    bottom: 18px;
+    padding: 10px 12px;
+    font-size: 11px;
   }
 
   .closing-cta {

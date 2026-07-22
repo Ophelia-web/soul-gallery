@@ -91,6 +91,12 @@ const requiredUiKeys = [
   'step4Title',
   'closedCorridorEn',
   'fifthKnockZh',
+  'beforeEnterEn',
+  'beforeEnterZh',
+  'backToTop',
+  'backToTopAria',
+  'sharedOwnerEyebrow',
+  'sharedResultKicker',
 ];
 
 for (const key of requiredUiKeys) {
@@ -110,6 +116,10 @@ for (const [key, value] of Object.entries(UI.zh)) {
   if (typeof value === 'string' && value.trim() === '' && !intentionalEmptyZh.has(key)) {
     failures.push(`Unexpected empty UI.zh.${key}`);
   }
+}
+
+if (typeof UI.en.beforeEnterZh !== 'string') {
+  failures.push('UI.en.beforeEnterZh must exist as string');
 }
 
 for (const artwork of artworks) {

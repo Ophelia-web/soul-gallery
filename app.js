@@ -4,6 +4,7 @@ import {
   visibleArtworks,
   hiddenArtworks,
 } from './data/artworks.js';
+import { ARTWORK_RATIOS } from './data/artwork-ratios.js';
 import { questions } from './data/questions.js';
 import { UI } from './data/i18n.js';
 import {
@@ -16,6 +17,51 @@ import {
   clamp,
 } from './lib/scoring.js';
 import { hydrateArtworkImages } from './lib/commons.js';
+
+let collectionScrollHandler = null;
+
+function cleanupCollectionScrollHandler() {
+  if (!collectionScrollHandler) {
+    return;
+  }
+
+  window.removeEventListener('scroll', collectionScrollHandler);
+  collectionScrollHandler = null;
+}
+
+function bindCollectionScrollHandler() {
+  cleanupCollectionScrollHandler();
+
+  const button = document.querySelector('.collection-back-to-top');
+
+  if (!button) {
+    return;
+  }
+
+  collectionScrollHandler = () => {
+    const threshold = Math.max(900, window.innerHeight * 1.25);
+    button.classList.toggle('is-visible', window.scrollY > threshold);
+  };
+
+  window.addEventListener('scroll', collectionScrollHandler, { passive: true });
+  collectionScrollHandler();
+}
+
+function artworkRatio(artwork) {
+  return Number(ARTWORK_RATIOS[artwork.id]) || 1;
+}
+
+function orderedCollectionArtworks() {
+  return [...visibleArtworks].sort((left, right) => {
+    const ratioDifference = artworkRatio(left) - artworkRatio(right);
+
+    if (Math.abs(ratioDifference) > 0.005) {
+      return ratioDifference;
+    }
+
+    return left.titleEn.localeCompare(right.titleEn);
+  });
+}
 
 const app = document.querySelector('#app');
 const toast = document.querySelector('#toast');
@@ -280,6 +326,8 @@ function artworkImageMarkup(artwork, { className = '', width = 1200, eager = fal
   const palette = artwork.palette || ['#4f5c52', '#9a8062', '#d1ba92'];
   const commonsFile = artwork.commonsFile || '';
   const alt = `${localizedArtworkTitle(artwork)} · ${artwork.titleEn}`;
+  const initialRatio = Number(ARTWORK_RATIOS[artwork.id]) || 0;
+  const ratioStyle = initialRatio > 0 ? `--image-ratio:${initialRatio};` : '';
 
   return `
     <figure
@@ -288,7 +336,13 @@ function artworkImageMarkup(artwork, { className = '', width = 1200, eager = fal
       data-file="${commonsFile.replaceAll('"', '&quot;')}"
       data-alt="${alt.replaceAll('"', '&quot;')}"
       data-width="${width}"
-      style="--art-a:${palette[0]};--art-b:${palette[1]};--art-c:${palette[2]}"
+      data-initial-ratio="${initialRatio || ''}"
+      style="
+        ${ratioStyle}
+        --art-a:${palette[0]};
+        --art-b:${palette[1]};
+        --art-c:${palette[2]};
+      "
     >
       <div class="image-skeleton" aria-hidden="true"><span></span></div>
       <img
@@ -397,6 +451,7 @@ function scrollToAdmissionNotice() {
 
 function renderHome() {
   state.view = 'home';
+  cleanupCollectionScrollHandler();
   clearShareParamsFromUrl();
 
   const featured = featuredIds
@@ -436,21 +491,10 @@ function renderHome() {
     </section>
 
     <section class="admission-notice section-frame" id="admission-notice">
-      <div class="admission-heading">
-        <div class="section-number">01</div>
-        <div>
-          ${bilingualEyebrow(t('curatorNoteEn'), t('curatorNoteZh'))}
-          <h2>${t('admissionNoticeTitle')}</h2>
-        </div>
-      </div>
-
-      <div class="admission-intro">
-        <p>${t('manifestoP1')}</p>
-        <p>
-          ${t('manifestoP2Before')}
-          <strong>${t('manifestoP2Strong')}</strong>
-        </p>
-      </div>
+      <header class="admission-heading">
+        ${bilingualEyebrow(t('beforeEnterEn'), t('beforeEnterZh'))}
+        <h2>${t('admissionNoticeTitle')}</h2>
+      </header>
 
       <div class="admission-rules">
         <article>
@@ -483,17 +527,27 @@ function renderHome() {
         </article>
       </div>
 
-      <div class="admission-method">
-        <div>
+      <div class="curatorial-method">
+        <article class="curator-note-panel">
+          ${bilingualEyebrow(t('curatorNoteEn'), t('curatorNoteZh'))}
+          <p>${t('manifestoP1')}</p>
+          <p>
+            ${t('manifestoP2Before')}
+            <strong>${t('manifestoP2Strong')}</strong>
+          </p>
+        </article>
+
+        <article class="method-panel">
           ${bilingualEyebrow(t('howWorksEn'), t('howWorksZh'))}
           <h3>${t('howWorksTitle')}</h3>
-        </div>
-        <p>${t('howWorksBody')}</p>
+          <p>${t('howWorksBody')}</p>
+        </article>
       </div>
 
       <div class="admission-cta">
         <button class="button button--primary button--large" data-action="ticket">
-          ${t('aboutStart')} <i aria-hidden="true">→</i>
+          ${t('aboutStart')}
+          <i aria-hidden="true">→</i>
         </button>
       </div>
     </section>
@@ -511,6 +565,7 @@ function renderHome() {
 
 function renderTicket() {
   state.view = 'ticket';
+  cleanupCollectionScrollHandler();
   clearShareParamsFromUrl();
 
   if (!state.ticketNumber) {
@@ -630,6 +685,7 @@ function renderTicket() {
 
 function renderQuiz() {
   state.view = 'quiz';
+  cleanupCollectionScrollHandler();
   const question = questions[state.questionIndex];
   const current = state.questionIndex + 1;
   const progress = Math.round((state.questionIndex / questions.length) * 100);
@@ -709,6 +765,7 @@ function answerQuestion(value) {
 }
 
 function beginCuration() {
+  cleanupCollectionScrollHandler();
   state.result = getResult(state.answers, questions, state.responseTimes);
   state.resultOrigin = 'own';
   state.resultOwnerName = state.visitorName;
@@ -796,6 +853,7 @@ function resultPortraitKicker(artwork) {
 
 function renderResult(result) {
   state.view = 'result';
+  cleanupCollectionScrollHandler();
   state.result = result;
   state.frameClicks = 0;
 
@@ -816,9 +874,27 @@ function renderResult(result) {
   app.innerHTML = shell(`
     <section class="result-hero">
       <div class="result-kicker">
-        <span data-result-kicker>${portraitKicker}</span>
+        <span data-result-kicker>${
+          isShared ? t('sharedResultKicker') : portraitKicker
+        }</span>
         <span>${t('collectionNumber')} ${number}</span>
       </div>
+      ${
+        isShared
+          ? `
+        <header class="shared-result-owner">
+          <p>${t('sharedOwnerEyebrow')}</p>
+          <h1>
+            ${
+              state.language === 'en'
+                ? t('sharedPortraitTitleEn', safeOwnerName)
+                : t('sharedPortraitTitle', safeOwnerName)
+            }
+          </h1>
+        </header>
+      `
+          : ''
+      }
       <div class="result-layout">
         <div class="result-art-column">
           <div class="ornate-frame ${artwork.hidden ? 'ornate-frame--hidden' : ''}" data-result-frame>
@@ -1004,6 +1080,8 @@ function renderCollection() {
   state.view = 'collection';
   clearShareParamsFromUrl();
 
+  const collectionArtworks = orderedCollectionArtworks();
+
   app.innerHTML = shell(`
     <section class="collection-hero">
       <button class="back-link" data-action="back-home">${t('backHome')}</button>
@@ -1013,7 +1091,7 @@ function renderCollection() {
     </section>
 
     <section class="collection-grid">
-      ${visibleArtworks
+      ${collectionArtworks
         .map(
           (artwork, index) => `
         <article class="collection-card">
@@ -1088,10 +1166,19 @@ function renderCollection() {
       <h2>${t('readyTitle')}</h2>
       <button class="button button--primary button--large" data-action="ticket">${t('startCta')} <i>→</i></button>
     </section>
+
+    <button
+      class="collection-back-to-top"
+      data-action="back-to-top"
+      aria-label="${t('backToTopAria')}"
+    >
+      ${t('backToTop')}
+    </button>
   `);
 
   bindGlobalActions();
   hydrateArtworkImages(app);
+  bindCollectionScrollHandler();
 }
 
 function renderCuratorEasterEgg() {
@@ -1193,6 +1280,12 @@ function handleAction(event) {
     case 'back-home':
       renderHome();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      break;
+    case 'back-to-top':
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
       break;
     case 'restart':
       renderTicket();

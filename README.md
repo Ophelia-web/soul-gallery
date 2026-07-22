@@ -12,7 +12,8 @@ Soul Gallery 是一场以世界名画为结果的人格体验。访客回答 32 
 - 八项人格光谱与一项思考节奏
 - 108 幅公开画作与 6 幅隐藏画作
 - 主画、三幅相邻画作与完整人格解读
-- 保持原作宽高比的馆藏与结果展示
+- 保持原作宽高比的首页拼贴、馆藏与结果展示
+- 馆藏按画面比例相邻排列
 - 可携带访客姓名的结果分享链接
 - 桌面、平板与手机响应式布局
 - Wikimedia Commons 精确文件在线载入
@@ -38,7 +39,7 @@ Soul Gallery 是一场以世界名画为结果的人格体验。访客回答 32 
 
 每幅作品在 `data/artworks.js` 中绑定一个经过核验的 Wikimedia Commons `commonsFile`。页面通过 Commons API 的 `titles` 参数读取该精确文件，不进行模糊搜索，也不会自动采用搜索结果中的其他图片。
 
-馆藏目录、主结果和相邻作品均保持原作宽高比完整显示。图片在线载入，不存入仓库。
+网站在 `data/artwork-ratios.js` 中保存每幅作品经核验的原始宽高比。首页拼贴、馆藏和结果页都以真实比例显示画作；馆藏根据宽高比排序，使相近比例的画作尽量出现在相邻位置。图片在线载入，不存入仓库。
 
 ## 项目结构
 
@@ -49,6 +50,7 @@ soul-gallery/
 ├── styles.css
 ├── data/
 │   ├── artworks.js
+│   ├── artwork-ratios.js
 │   ├── questions.js
 │   └── i18n.js
 ├── lib/
@@ -59,7 +61,8 @@ soul-gallery/
 ├── scripts/
 │   ├── audit-commons.mjs
 │   ├── audit-i18n.mjs
-│   └── audit-results.mjs
+│   ├── audit-results.mjs
+│   └── build-artwork-ratios.mjs
 ├── IMAGE_AUDIT.md
 ├── render.yaml
 ├── site.webmanifest
@@ -89,12 +92,13 @@ http://localhost:8000
 ## 质量审计
 
 ```bash
+node scripts/build-artwork-ratios.mjs
 node scripts/audit-commons.mjs
 node scripts/audit-i18n.mjs
 node scripts/audit-results.mjs
 ```
 
-三个脚本分别检查画作文件、双语完整性和结果可达性。
+这些脚本分别更新宽高比数据，并检查画作文件、双语完整性和结果可达性。
 
 ## Render 部署
 
