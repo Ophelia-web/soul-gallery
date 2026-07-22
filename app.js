@@ -19,6 +19,7 @@ import {
 import { hydrateArtworkImages } from './lib/commons.js';
 
 let collectionScrollHandler = null;
+const COLLECTION_PREVIEW_COUNT = 8;
 
 function cleanupCollectionScrollHandler() {
   if (!collectionScrollHandler) {
@@ -154,6 +155,7 @@ const state = {
   ticketNumber: null,
   resultOrigin: 'own',
   resultOwnerName: '',
+  collectionExpanded: false,
 };
 
 const featuredIds = [
@@ -527,29 +529,19 @@ function renderHome() {
         </article>
       </div>
 
-      <div class="curatorial-method">
-        <article class="curator-note-panel">
-          ${bilingualEyebrow(t('curatorNoteEn'), t('curatorNoteZh'))}
-          <p>${t('manifestoP1')}</p>
-          <p>
-            ${t('manifestoP2Before')}
-            <strong>${t('manifestoP2Strong')}</strong>
+      <section class="curator-note-section">
+        ${bilingualEyebrow(t('curatorNoteEn'), t('curatorNoteZh'))}
+        <div class="curator-note-layout">
+          <div class="curator-note-main">
+            <p>${t('curatorNoteP1')}</p>
+            <p>${t('curatorNoteP2')}</p>
+          </div>
+          <p class="curator-note-conclusion">
+            ${t('curatorNoteP3Before')}
+            <strong>${t('curatorNoteP3Strong')}</strong>
           </p>
-        </article>
-
-        <article class="method-panel">
-          ${bilingualEyebrow(t('howWorksEn'), t('howWorksZh'))}
-          <h3>${t('howWorksTitle')}</h3>
-          <p>${t('howWorksBody')}</p>
-        </article>
-      </div>
-
-      <div class="admission-cta">
-        <button class="button button--primary button--large" data-action="ticket">
-          ${t('aboutStart')}
-          <i aria-hidden="true">→</i>
-        </button>
-      </div>
+        </div>
+      </section>
     </section>
 
     <section class="closing-cta">
@@ -1076,11 +1068,122 @@ function secretNote(artwork) {
   return notes[index];
 }
 
+function collectionCardMarkup(artwork, index) {
+  return `
+    <article class="collection-card" data-collection-card>
+      <header class="collection-card-header">
+        <span class="collection-index">${String(index + 1).padStart(3, '0')}</span>
+        <span class="collection-status">${bilingualInline(t('onView'), t('onViewZh'))}</span>
+      </header>
+      ${artworkImageMarkup(artwork, { className: 'collection-art', width: 1100 })}
+      <div class="collection-copy">
+        <p class="collection-movement">
+          ${localizedField(artwork, 'movement')}
+          <span aria-hidden="true">·</span>
+          ${artwork.year}
+        </p>
+        <h2>${localizedArtworkTitle(artwork)}</h2>
+        ${
+          state.language === 'zh'
+            ? `<p class="collection-title-en">${artwork.titleEn}</p>`
+            : ''
+        }
+        <dl class="collection-provenance">
+          <div>
+            <dt>${t('artistLabel')}</dt>
+            <dd>${localizedField(artwork, 'artist')}</dd>
+          </div>
+          <div>
+            <dt>${t('museumLabel')}</dt>
+            <dd>
+              ${localizedField(artwork, 'museum')}
+              ·
+              ${localizedField(artwork, 'city')}
+            </dd>
+          </div>
+        </dl>
+        <div class="collection-keywords">
+          ${localizedArtworkKeywords(artwork)
+            .map((keyword) => `<span>${keyword}</span>`)
+            .join('')}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function expandCollection() {
+  if (state.view !== 'collection' || state.collectionExpanded) {
+    return;
+  }
+
+  const grid = document.querySelector('[data-collection-grid]');
+  const expandBlock = document.querySelector('.collection-expand');
+
+  if (!grid) {
+    return;
+  }
+
+  const collectionArtworks = orderedCollectionArtworks();
+  const remainingMarkup = collectionArtworks
+    .slice(COLLECTION_PREVIEW_COUNT)
+    .map((artwork, index) =>
+      collectionCardMarkup(artwork, index + COLLECTION_PREVIEW_COUNT)
+    )
+    .join('');
+
+  grid.insertAdjacentHTML('beforeend', remainingMarkup);
+  state.collectionExpanded = true;
+  expandBlock?.remove();
+  hydrateArtworkImages(grid);
+}
+
+function scrollCollectionToTop() {
+  const shouldCollapse = state.view === 'collection' && state.collectionExpanded;
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+
+  if (!shouldCollapse) {
+    return;
+  }
+
+  const startedAt = performance.now();
+
+  const waitForTop = () => {
+    if (state.view !== 'collection') {
+      return;
+    }
+
+    const reachedTop = window.scrollY <= 4;
+    const timedOut = performance.now() - startedAt > 1600;
+
+    if (reachedTop || timedOut) {
+      state.collectionExpanded = false;
+      renderCollection();
+      window.scrollTo({
+        top: 0,
+        behavior: 'auto',
+      });
+      return;
+    }
+
+    requestAnimationFrame(waitForTop);
+  };
+
+  requestAnimationFrame(waitForTop);
+}
+
 function renderCollection() {
   state.view = 'collection';
   clearShareParamsFromUrl();
 
   const collectionArtworks = orderedCollectionArtworks();
+  const displayedArtworks = state.collectionExpanded
+    ? collectionArtworks
+    : collectionArtworks.slice(0, COLLECTION_PREVIEW_COUNT);
 
   app.innerHTML = shell(`
     <section class="collection-hero">
@@ -1090,53 +1193,29 @@ function renderCollection() {
       <p>${t('collectionIntro')}</p>
     </section>
 
-    <section class="collection-grid">
-      ${collectionArtworks
-        .map(
-          (artwork, index) => `
-        <article class="collection-card">
-          <header class="collection-card-header">
-            <span class="collection-index">${String(index + 1).padStart(3, '0')}</span>
-            <span class="collection-status">${bilingualInline(t('onView'), t('onViewZh'))}</span>
-          </header>
-          ${artworkImageMarkup(artwork, { className: 'collection-art', width: 1100 })}
-          <div class="collection-copy">
-            <p class="collection-movement">
-              ${localizedField(artwork, 'movement')}
-              <span aria-hidden="true">·</span>
-              ${artwork.year}
-            </p>
-            <h2>${localizedArtworkTitle(artwork)}</h2>
-            ${
-              state.language === 'zh'
-                ? `<p class="collection-title-en">${artwork.titleEn}</p>`
-                : ''
-            }
-            <dl class="collection-provenance">
-              <div>
-                <dt>${t('artistLabel')}</dt>
-                <dd>${localizedField(artwork, 'artist')}</dd>
-              </div>
-              <div>
-                <dt>${t('museumLabel')}</dt>
-                <dd>
-                  ${localizedField(artwork, 'museum')}
-                  ·
-                  ${localizedField(artwork, 'city')}
-                </dd>
-              </div>
-            </dl>
-            <div class="collection-keywords">
-              ${localizedArtworkKeywords(artwork)
-                .map((keyword) => `<span>${keyword}</span>`)
-                .join('')}
-            </div>
-          </div>
-        </article>
-      `
-        )
+    <section class="collection-grid" data-collection-grid>
+      ${displayedArtworks
+        .map((artwork, index) => collectionCardMarkup(artwork, index))
         .join('')}
     </section>
+
+    ${
+      state.collectionExpanded
+        ? ''
+        : `
+      <div class="collection-expand">
+        <button
+          class="button button--ghost button--large"
+          data-action="expand-collection"
+          aria-expanded="false"
+        >
+          ${t('expandCollection')}
+          <i aria-hidden="true">↓</i>
+        </button>
+        <p>${t('collectionPreviewNote')}</p>
+      </div>
+    `
+    }
 
     <section class="hidden-corridor">
       <div>
@@ -1192,7 +1271,7 @@ function renderCuratorEasterEgg() {
   dialog.dataset.curatorModal = 'true';
   dialog.innerHTML = `
     <button data-action="close-curator" aria-label="${t('close')}">×</button>
-    ${bilingualEyebrow(t('fifthKnock'), t('fifthKnockZh'))}
+    <p class="curator-knock-label">${t('fifthKnock')}</p>
     <h2>${t('curatorEggTitle')}</h2>
     <p>${t('curatorEggBody')}</p>
   `;
@@ -1271,6 +1350,7 @@ function handleAction(event) {
       }
       break;
     case 'collection':
+      state.collectionExpanded = false;
       renderCollection();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
@@ -1282,10 +1362,10 @@ function handleAction(event) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       break;
     case 'back-to-top':
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      });
+      scrollCollectionToTop();
+      break;
+    case 'expand-collection':
+      expandCollection();
       break;
     case 'restart':
       renderTicket();

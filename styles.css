@@ -530,6 +530,19 @@ img {
   margin-bottom: 50px;
 }
 
+.admission-heading .eyebrow {
+  margin-bottom: 27px;
+  color: var(--wine);
+  font-family: var(--sans);
+  font-size: clamp(14px, 1.35vw, 18px);
+  font-weight: 700;
+  letter-spacing: .24em;
+}
+
+.admission-heading .eyebrow small {
+  display: none;
+}
+
 .admission-heading h2 {
   margin: 0;
   font-family: var(--serif);
@@ -543,18 +556,17 @@ img {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
-  margin-top: 50px;
   border: 1px solid var(--line);
   background: var(--line);
 }
 
 .admission-rules article {
-  min-height: 260px;
+  min-height: 0;
   display: grid;
-  grid-template-columns: 42px 1fr;
+  grid-template-columns: 42px minmax(0, 1fr);
   gap: 24px;
   align-items: start;
-  padding: 40px;
+  padding: 36px 40px 32px;
   background: rgba(243, 238, 228, .97);
 }
 
@@ -582,74 +594,52 @@ img {
   line-height: 1.85;
 }
 
-.curatorial-method {
-  display: grid;
-  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
-  gap: 1px;
-  margin-top: 80px;
+.curator-note-section {
+  margin-top: clamp(68px, 8vw, 105px);
+  padding: clamp(55px, 6vw, 82px);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
-  background: var(--line);
-}
-
-.curatorial-method article {
-  min-width: 0;
-  padding: clamp(44px, 5vw, 72px);
-  background: var(--paper);
-}
-
-.curator-note-panel {
-  display: grid;
-  align-content: start;
-  gap: 24px;
-}
-
-.curator-note-panel > p {
-  margin: 0;
-  color: #545b55;
-  font-family: var(--serif);
-  font-size: 17px;
-  line-height: 1.9;
-}
-
-.curator-note-panel strong {
-  color: var(--green);
-  font-weight: 600;
-}
-
-.method-panel {
   background:
     linear-gradient(
-      135deg,
-      rgba(23, 63, 54, .045),
-      rgba(184, 154, 85, .055)
-    ),
-    var(--paper) !important;
+      130deg,
+      rgba(255, 255, 255, .16),
+      rgba(23, 63, 54, .035)
+    );
 }
 
-.method-panel h3 {
-  max-width: 13em;
-  margin: 0 0 35px;
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: clamp(42px, 4.5vw, 66px);
-  line-height: 1.12;
-  font-weight: 500;
-  letter-spacing: -.035em;
+.curator-note-section > .eyebrow {
+  margin-bottom: 40px;
 }
 
-.method-panel > p {
+.curator-note-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
+  gap: clamp(50px, 7vw, 100px);
+  align-items: start;
+}
+
+.curator-note-main {
+  display: grid;
+  gap: 30px;
+}
+
+.curator-note-main p,
+.curator-note-conclusion {
   margin: 0;
   color: #545b55;
   font-family: var(--serif);
-  font-size: 17px;
-  line-height: 1.9;
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.95;
 }
 
-.admission-cta {
-  display: flex;
-  justify-content: flex-start;
-  padding-top: 48px;
+.curator-note-conclusion {
+  padding-left: 34px;
+  border-left: 2px solid var(--gold);
+}
+
+.curator-note-conclusion strong {
+  color: var(--green);
+  font-weight: 600;
 }
 
 .manifesto {
@@ -1637,7 +1627,7 @@ img {
   margin: 0 0 24px;
 }
 
-.secret-dialog p:not(.eyebrow) {
+.secret-dialog p:not(.eyebrow):not(.curator-knock-label) {
   font-family: var(--serif);
   font-size: 19px;
   line-height: 1.85;
@@ -1690,6 +1680,51 @@ img {
   opacity: .38;
   cursor: not-allowed;
   transform: none;
+}
+
+.curator-dialog .curator-knock-label {
+  margin: 0 0 46px;
+  color: var(--gold-light);
+  font-family: var(--sans);
+  font-size: clamp(18px, 1.65vw, 24px);
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+}
+
+.curator-dialog h2 {
+  margin-top: 0;
+}
+
+.collection-expand {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 10px 0 clamp(85px, 10vw, 135px);
+  text-align: center;
+}
+
+.collection-expand .button {
+  min-width: 190px;
+}
+
+.collection-expand p {
+  max-width: 480px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.museum-title-line {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.museum-card h2 {
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .collection-back-to-top {
@@ -1958,35 +1993,30 @@ img {
 
   .admission-rules {
     grid-template-columns: 1fr;
-    margin-top: 36px;
   }
 
   .admission-rules article {
-    min-height: auto;
-    grid-template-columns: 36px 1fr;
-    gap: 16px;
-    padding: 30px 24px;
+    grid-template-columns: 36px minmax(0, 1fr);
+    padding: 28px 22px 26px;
   }
 
   .admission-rules h3 {
     font-size: 28px;
   }
 
-  .curatorial-method {
+  .curator-note-section {
+    padding: 45px 24px;
+  }
+
+  .curator-note-layout {
     grid-template-columns: 1fr;
-    margin-top: 60px;
+    gap: 36px;
   }
 
-  .curatorial-method article {
-    padding: 42px 24px;
-  }
-
-  .method-panel h3 {
-    font-size: 42px;
-  }
-
-  .admission-cta {
-    padding-top: 36px;
+  .curator-note-conclusion {
+    padding: 28px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--gold);
   }
 
   .ticket-layout {
@@ -2026,6 +2056,14 @@ img {
 }
 
 @media (max-width: 430px) {
+  .museum-title-line {
+    white-space: normal;
+  }
+
+  .museum-card h2 {
+    max-width: 8em;
+  }
+
   .ticket-footer {
     grid-template-columns: 1fr 1fr;
   }
@@ -2623,6 +2661,21 @@ img {
     bottom: 18px;
     padding: 10px 12px;
     font-size: 11px;
+  }
+
+  .curator-dialog .curator-knock-label {
+    margin-bottom: 32px;
+    font-size: 15px;
+    letter-spacing: .22em;
+  }
+
+  .collection-expand {
+    padding-bottom: 78px;
+  }
+
+  .collection-expand .button {
+    width: 100%;
+    max-width: 330px;
   }
 
   .closing-cta {

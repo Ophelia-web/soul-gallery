@@ -90,9 +90,15 @@ const requiredUiKeys = [
   'admissionNoticeTitle',
   'step4Title',
   'closedCorridorEn',
-  'fifthKnockZh',
+  'fifthKnock',
   'beforeEnterEn',
   'beforeEnterZh',
+  'expandCollection',
+  'collectionPreviewNote',
+  'curatorNoteP1',
+  'curatorNoteP2',
+  'curatorNoteP3Before',
+  'curatorNoteP3Strong',
   'backToTop',
   'backToTopAria',
   'sharedOwnerEyebrow',
@@ -105,7 +111,26 @@ for (const key of requiredUiKeys) {
   }
 }
 
+const removedUiKeys = [
+  'fifthKnockZh',
+  'manifestoP1',
+  'manifestoP2Before',
+  'manifestoP2Strong',
+  'howWorksEn',
+  'howWorksZh',
+  'howWorksTitle',
+  'howWorksBody',
+  'aboutStart',
+];
+
+for (const key of removedUiKeys) {
+  if (key in UI.zh || key in UI.en) {
+    failures.push(`Removed UI key still present: ${key}`);
+  }
+}
+
 const intentionalEmptyZh = new Set([
+  'beforeEnterZh',
   'spectrumZh',
   'neighboursZh',
   'museumZh',
@@ -120,6 +145,10 @@ for (const [key, value] of Object.entries(UI.zh)) {
 
 if (typeof UI.en.beforeEnterZh !== 'string') {
   failures.push('UI.en.beforeEnterZh must exist as string');
+}
+
+if (UI.zh.beforeEnterZh !== '' || UI.en.beforeEnterZh !== '') {
+  failures.push('beforeEnterZh must be an empty string in both languages');
 }
 
 for (const artwork of artworks) {

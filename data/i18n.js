@@ -14,39 +14,35 @@ export const UI = {
     heroEyebrowZh: '人格肖像展',
     heroTitle: '你的灵魂，<br />早已被一位<br />画家画过。',
     heroIntro:
-      '回答32个关于日常选择的问题。你不需要懂艺术，只需忠于自己的第一反应。我们会在114幅画作中，寻找那幅与你拥有相似节奏、光线与情绪结构的作品。',
+      '回答32道选择题。你不需要懂艺术，只需忠于自己的第一反应。我们会在114幅画作中，寻找那幅与你拥有相似节奏、光线与情绪结构的作品。',
     startCta: '领取门票',
     collectionCta: '先看馆藏',
-    factChoices: '道日常选择',
+    factChoices: '道选择题',
     factPublic: '幅公开馆藏',
     factHidden: '幅隐藏画作',
     curatorNoteEn: 'CURATOR\'S NOTE',
     curatorNoteZh: '策展人手记',
     beforeEnterEn: 'BEFORE YOU ENTER',
-    beforeEnterZh: '入场以前',
+    beforeEnterZh: '',
     admissionNoticeTitle: '入馆须知',
-    manifestoP1:
+    curatorNoteP1:
       '我们不会问你是否认识莫奈，也不会让你在梵高和维米尔之间选择喜好。问题发生在更普通的地方：一次雨天、一段沉默、一个临时改变的计划。',
-    manifestoP2Before: '最终结果不是“你最喜欢哪幅画”，而是',
-    manifestoP2Strong: '哪幅画的节奏、光线与情绪结构，最接近你处理世界的方式。',
+    curatorNoteP2:
+      '32 道问题分别落在八条光谱：向内感、秩序感、情绪浓度、理想倾向、连接方式、新鲜偏好、行动力度与内在明度。系统还会静静记录你的思考节奏。',
+    curatorNoteP3Before: '最终结果不是“你最喜欢哪幅画”，而是',
+    curatorNoteP3Strong: '哪幅画的节奏、光线与情绪结构，最接近你处理世界的方式。',
     step1Title: '凭第一反应',
     step1Body:
       '犹豫太久时，人会开始回答“理想中的自己”。请选择现实里最自然的反应，而不是看起来更成熟、更善良或更聪明的答案。',
-    step2Title: '接受复杂结果',
+    step2Title: '等待多维结果',
     step2Body:
       '你会得到一幅主画、三幅相邻画作和九项光谱。它们共同描述你此刻处理世界的节奏，没有任何一幅画或任何一侧光谱更高级。',
     step3Title: '隐藏画作不会提前出现',
     step3Body:
       '6幅隐藏画作不会出现在公开馆藏里。只有完成测试后，其中某幅画与整体结果足够接近时，它才会出现。隐藏并不代表更好或更稀有。',
-    step4Title: '把结果当作一次观看',
+    step4Title: '结果仅供娱乐',
     step4Body:
-      'Soul Gallery 不是心理诊断，也不会给人格定稿。生活阶段、关系和环境都会改变你此刻更接近哪一幅画。',
-    howWorksEn: 'HOW IT WORKS',
-    howWorksZh: '画作如何找到你',
-    howWorksTitle: '我们比较的不是喜好，<br />而是结构。',
-    howWorksBody:
-      '32 道问题分别落在八条光谱：向内感、秩序感、情绪浓度、理想倾向、连接方式、新鲜偏好、行动力度与内在明度。系统还会静静记录你的思考节奏。每幅画拥有自己的光谱轮廓，结果来自整体距离，而不是某一道题的标签。',
-    aboutStart: '我明白了，领取门票',
+      'Soul Gallery 是一场审美化的人格体验，仅供娱乐与自我观察，不用于心理诊断，也不会为人格定稿。生活阶段、关系与环境都可能改变你此刻更接近哪一幅画。',
     admissionEn: 'ADMISSION IS FREE',
     admissionZh: '请凭票入场',
     closingTitle: '也许有一幅画，<br />与你看世界的方式相似。',
@@ -114,7 +110,7 @@ export const UI = {
     neighbourMatch: '相邻契合',
     museumEn: 'WHERE THE ORIGINAL LIVES',
     museumZh: '',
-    museumTitle: '现在，真正的它在这里。',
+    museumTitle: '现在，<br /><span class="museum-title-line">真正的它在这里。</span>',
     museumBody: '有一天经过这座城市时，也许你可以去看看这幅真正照见过你的画。',
     sharedResultLead: (name, title) =>
       `${name} 在这里遇见了《${title}》。你的结果可能会是完全不同的一幅画。`,
@@ -134,6 +130,8 @@ export const UI = {
     backHome: '← 返回首页',
     backToTop: '↑ 回到顶部',
     backToTopAria: '回到页面顶部',
+    expandCollection: '展开全部',
+    collectionPreviewNote: '先为你展示8幅画。展开后可查看全部108幅公开馆藏。',
     onView: 'ON VIEW',
     onViewZh: '公开馆藏',
     artistLabel: '作者',
@@ -148,7 +146,6 @@ export const UI = {
     readyEnterZh: '',
     readyTitle: '不要先挑喜欢的画。让画来挑你。',
     fifthKnock: 'THE FIFTH KNOCK',
-    fifthKnockZh: '第五次敲门',
     curatorEggTitle: '馆员听见了第五次敲门。',
     curatorEggBody:
       '有些画，要站近一点才看得见笔触；有些自己，也要多看几次才慢慢明白。愿你不急着把人生解释完整，只在每一次回望时，比上一次更诚实地认出自己。',
@@ -178,10 +175,10 @@ export const UI = {
     heroEyebrowZh: '',
     heroTitle: 'Your soul<br />has already been painted.',
     heroIntro:
-      'Answer 32 questions drawn from ordinary life. You do not need to know art; you only need to respond honestly. Among 114 paintings, we will look for the work that shares your rhythm, light, and emotional structure.',
+      'Answer 32 questions. You do not need to know art; you only need to respond honestly. Among 114 paintings, we will look for the work that shares your rhythm, light, and emotional structure.',
     startCta: 'Get your ticket',
     collectionCta: 'Browse the collection',
-    factChoices: 'everyday choices',
+    factChoices: 'questions',
     factPublic: 'works on view',
     factHidden: 'hidden paintings',
     curatorNoteEn: 'CURATOR\'S NOTE',
@@ -189,29 +186,25 @@ export const UI = {
     beforeEnterEn: 'BEFORE YOU ENTER',
     beforeEnterZh: '',
     admissionNoticeTitle: 'Before you enter',
-    manifestoP1:
-      'We will not ask whether you recognize Monet, or force a preference between van Gogh and Vermeer. The questions live in quieter places: a rainy street, an unfinished silence, a plan that suddenly changes.',
-    manifestoP2Before: 'The result is not “the painting you like most,” but ',
-    manifestoP2Strong:
-      'the painting whose rhythm, light, and emotional structure most closely resembles the way you meet the world.',
+    curatorNoteP1:
+      'We will not ask whether you recognise Monet, or make you choose between van Gogh and Vermeer. The questions take place somewhere more ordinary: a rainy day, a stretch of silence, or a plan changed at the last minute.',
+    curatorNoteP2:
+      'The 32 questions are distributed across eight spectrums: inwardness, structure, emotional intensity, idealism, connection, novelty, agency, and inner brightness. The system also quietly records your decision tempo.',
+    curatorNoteP3Before: 'The final result is not “which painting you like best,” but ',
+    curatorNoteP3Strong:
+      'which painting’s rhythm, light, and emotional structure most closely resembles the way you meet the world.',
     step1Title: 'Trust the first impulse',
     step1Body:
       'Hesitate too long and you may begin answering as the person you wish to be. Choose the response that feels true in ordinary life, not the one that sounds more mature, kind, or clever.',
-    step2Title: 'Allow a complex result',
+    step2Title: 'Wait for a multidimensional result',
     step2Body:
       'You will receive one principal painting, three neighbouring works, and nine spectrums. Together they describe your present rhythm; no painting or side of a spectrum ranks above another.',
     step3Title: 'Hidden paintings appear only at the end',
     step3Body:
       'Six hidden paintings do not appear in the public collection. One appears only when the completed result comes especially close to it. Hidden does not mean better or rarer.',
-    step4Title: 'Treat the result as a way of looking',
+    step4Title: 'For reflection and entertainment',
     step4Body:
-      'Soul Gallery is not a psychological diagnosis and does not fix a personality permanently. Life, relationships, and circumstances can change which painting feels closest today.',
-    howWorksEn: 'HOW IT WORKS',
-    howWorksZh: '',
-    howWorksTitle: 'We compare structures, not preferences.',
-    howWorksBody:
-      'Thirty-two questions fall across eight spectra: inwardness, structure, intensity, idealism, connection, novelty, agency, and brightness. The system also quietly records your decision tempo. Each painting carries its own contour; the result comes from overall distance, not from a single labelled answer.',
-    aboutStart: 'I understand — get my ticket',
+      'Soul Gallery is an aesthetic personality experience for entertainment and personal reflection. It is not a psychological diagnosis and does not define anyone permanently. Life, relationships, and circumstances may change which painting feels closest today.',
     admissionEn: 'ADMISSION IS FREE',
     admissionZh: '',
     closingTitle: 'Somewhere in the collection, a painting may see the world as you do.',
@@ -303,6 +296,8 @@ export const UI = {
     backHome: '← Back to home',
     backToTop: '↑ Back to top',
     backToTopAria: 'Back to top of page',
+    expandCollection: 'View all 108 paintings',
+    collectionPreviewNote: 'Eight works are shown first. Expand the collection to view all 108 paintings.',
     onView: 'ON VIEW',
     onViewZh: '',
     artistLabel: 'Artist',
@@ -317,7 +312,6 @@ export const UI = {
     readyEnterZh: '',
     readyTitle: 'Do not choose a favourite first. Let a painting choose you.',
     fifthKnock: 'THE FIFTH KNOCK',
-    fifthKnockZh: '',
     curatorEggTitle: 'The curator heard the fifth knock.',
     curatorEggBody:
       'Some paintings reveal their brushwork only when you step closer. The self can be the same. May you never rush to explain your whole life, but recognise yourself a little more honestly each time you look again.',
